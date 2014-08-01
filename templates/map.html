@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Plenar.io Grid Explorer</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    
+    <link href="/static/css/leaflet.css" rel="stylesheet">
+    <link href="/static/css/leaflet.draw.css" rel="stylesheet">
+
+    <link href="/static/css/custom.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="static/js/html5shiv.js"></script>
+      <script src="static/js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body style="height: 100%">
+      <div class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Plenar.io</a>
+        </div>
+        <div class="navbar-collapse collapse pull-right">
+          <ul class="nav navbar-nav">
+            <li class=""><a href="/">API</a></li>
+            <li class=""><a href="/grid/">Grid</a></li>
+            <li class="active"><a href="/map/">Map</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="map-view" class='well'></div>
+                <div id="query"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="about"></div>
+                <div id="refine"></div>
+                <div id="response"></div>
+                <div id="explore"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="error" aria-hidden="true"></div>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/js/jquery-1.10.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/analytics_lib.js"></script>
+
+    <script src="/static/js/moment.min.js"></script>
+    
+    <script src="/static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/js/highcharts.js"></script>
+    <script type="text/javascript" src="/static/js/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/js/backbone-min.js"></script>
+    <script type="text/javascript" src="/static/js/chart_helper.js"></script>
+    <script type="text/javascript" src="/static/js/ejs_production.js"></script>
+    <script type="text/javascript" src="/static/js/spin.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.spin.js"></script>
+    <script type="text/javascript" src="/static/js/leaflet.js"></script>
+    <script type="text/javascript" src="/static/js/leaflet.draw.js"></script>
+    <script type="text/javascript" src="/static/js/data-map.js"></script>
+
+
+  </body>
+</html>
