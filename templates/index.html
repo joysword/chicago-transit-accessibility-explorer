@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100%;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -11,6 +11,8 @@
 		<!-- Bootstrap core CSS -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
+        <!--<link href="//plenario.datamade.us/static/css/bootstrap.min.css" rel="stylesheet" >-->
+        <!--<link href="//plenario.datamade.us/static/css/font-awesome.css" rel="stylesheet" >-->
 
         <!-- Mapbox core CSS -->
         <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
@@ -19,9 +21,13 @@
 
         <!-- custom css -->
         <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+
+        <script type='text/javascript'>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
     </head>
 
-    <body>
+    <body style="height: 100%">
         <!-- Navigation bar -->
         <div class="navbar navbar-default navbar-static-top" role="navigation">
             <div class="navbar-header">
@@ -50,142 +56,167 @@
                         <div id="sidebar">
                             <div>
                                 <form role="form">
+                                    <legend>Accessibility Visualized</legend>
                                     <div class="form-group">
-                                        <label for="select-type">Travel Type: </label>
-                                        <select id="select-type" class="form-control">
-                                            <option value="auto" selected=true>
-                                                Auto
-                                            </option>
-                                            <option value="transit">
-                                                Transit
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group no-disp">
-                                        <label for="select-time-of-day">Departure Time: </label>
-                                        <select id="select-time-of-day" class="form-control">
-                                            <option value="0" selected=true>
-                                                midnight
-                                            </option>
-                                            <option value="1">
-                                                1 am
-                                            </option>
-                                            <option value="2">
-                                                2 am
-                                            </option>
-                                            <option value="3">
-                                                3 am
-                                            </option>
-                                            <option value="4">
-                                                4 am
-                                            </option>
-                                            <option value="5">
-                                                5 am
-                                            </option>
-                                            <option value="6">
-                                                6 am
-                                            </option>
-                                            <option value="7">
-                                                7 am
-                                            </option>
-                                            <option value="8">
-                                                8 am
-                                            </option>
-                                            <option value="9">
-                                                9 am
-                                            </option>
-                                            <option value="10">
-                                                10 am
-                                            </option>
-                                            <option value="11">
-                                                11 am
-                                            </option>
-                                            <option value="12">
-                                                noon
-                                            </option>
-                                            <option value="13">
-                                                1 pm
-                                            </option>
-                                            <option value="14">
-                                                2 pm
-                                            </option>
-                                            <option value="15">
-                                                3 pm
-                                            </option>
-                                            <option value="16">
-                                                4 pm
-                                            </option>
-                                            <option value="17">
-                                                5 pm
-                                            </option>
-                                            <option value="18">
-                                                6 pm
-                                            </option>
-                                            <option value="19">
-                                                7 pm
-                                            </option>
-                                            <option value="20">
-                                                8 pm
-                                            </option>
-                                            <option value="21">
-                                                9 pm
-                                            </option>
-                                            <option value="22">
-                                                10 pm
-                                            </option>
-                                            <option value="23">
-                                                11 pm
-                                            </option>
-                                        </select>
+                                        <div id="form-type">
+                                            <label for="select-type">Travel Type: </label>
+                                            <select id="select-type" class="form-control">
+                                                <option value="auto" selected>Auto</option>
+                                                <option value="transit">Transit</option>
+                                            </select>
+                                        </div><!--/#form-type-->
                                     </div><!--/.form-group-->
                                     <div class="form-group">
-                                        <label for="select-threshold">Travel Time Threshold: </label>
-                                        <select id="select-threshold" class="form-control">
-                                            <option value="5">
-                                                5 minutes
-                                            </option>
-                                            <option value="10">
-                                                10 minutes
-                                            </option>
-                                            <option value="15">
-                                                15 minutes
-                                            </option>
-                                            <option value="20">
-                                                20 minutes
-                                            </option>
-                                            <option value="25">
-                                                25 minutes
-                                            </option>
-                                            <option value="30" selected=true>
-                                                30 minutes
-                                            </option>
-                                            <option value="35">
-                                                35 minutes
-                                            </option>
-                                            <option value="40">
-                                                40 minutes
-                                            </option>
-                                            <option value="45">
-                                                45 minutes
-                                            </option>
-                                            <option value="50">
-                                                50 minutes
-                                            </option>
-                                            <option value="55">
-                                                55 minutes
-                                            </option>
-                                            <option value="60">
-                                                60 minutes
-                                            </option>
-                                        </select>
+                                        <div id="form-time" class="no-disp">
+                                            <label for="select-time">Departure Time: </label>
+                                            <select id="select-time" class="form-control">
+                                                <option value="" disabled selected>please select a departure time</option>
+                                                <option value="0">midnight</option>
+                                                <option value="1">1 am</option>
+                                                <option value="2">2 am</option>
+                                                <option value="3">3 am</option>
+                                                <option value="4">4 am</option>
+                                                <option value="5">5 am</option>
+                                                <option value="6">6 am</option>
+                                                <option value="7">7 am</option>
+                                                <option value="8">8 am</option>
+                                                <option value="9">9 am</option>
+                                                <option value="10">10 am</option>
+                                                <option value="11">11 am</option>
+                                                <option value="12">noon</option>
+                                                <option value="13">1 pm</option>
+                                                <option value="14">2 pm</option>
+                                                <option value="15">3 pm</option>
+                                                <option value="16">4 pm</option>
+                                                <option value="17">5 pm</option>
+                                                <option value="18">6 pm</option>
+                                                <option value="19">7 pm</option>
+                                                <option value="20">8 pm</option>
+                                                <option value="21">9 pm</option>
+                                                <option value="22">10 pm</option>
+                                                <option value="23">11 pm</option>
+                                            </select>
+                                        </div><!--/#form-type-->
                                     </div><!--/.form-group-->
-
-
-
-
-
-
-
+                                    <div class="form-group">
+                                        <div id="form-threshold">
+                                            <label for="select-threshold">Travel Time Threshold: </label>
+                                            <select id="select-threshold" class="form-control">
+                                                <option value="5">5 minutes</option>
+                                                <option value="10">10 minutes</option>
+                                                <option value="15">15 minutes</option>
+                                                <option value="20">20 minutes</option>
+                                                <option value="25">25 minutes</option>
+                                                <option value="30" selected=true>30 minutes</option>
+                                                <option value="35">35 minutes</option>
+                                                <option value="40">40 minutes</option>
+                                                <option value="45">45 minutes</option>
+                                                <option value="50">50 minutes</option>
+                                                <option value="55">55 minutes</option>
+                                                <option value="60">60 minutes</option>
+                                            </select>
+                                        </div><!--/#form-threshold-->
+                                    </div><!--/.form-group-->
+                                    <div class="form-group">
+                                        <div id="form-filter">
+                                            <label for="select-filter">Select Filter: </label>
+                                            <select id="select-filter" class="form-control">
+                                                <option value="fi_age">By Age</option>
+                                                <option value="fi_earning">By Earning</option>
+                                                <option value="fi_industry" selected=true>By Industry</option>
+                                                <option value="fi_race">By Race</option>
+                                                <option value="fi_ethnicity">By Ethnicity</option>
+                                                <option value="fi_education">By Education Level</option>
+                                                <option value="fi_gender">By Gender</option>
+                                            </select>
+                                        </div><!--/#form-filter-->
+                                    </div><!--/.form-group-->
+                                    <div class="form-group">
+                                        <div id="form-age"  class="no-disp">
+                                            <label for="select-age">Select Age: </label>
+                                            <select id="select-age" class="form-control">
+                                                <option value="" disabled selected>please select age range</option>
+                                                <option value="CA01">29 or younger</option>
+                                                <option value="CA02">30 - 54</option>
+                                                <option value="CA03">55 or older</option>
+                                            </select>
+                                        </div><!--/#form-age-->
+                                        <div id="form-earning" class="no-disp">
+                                            <label for="select-earning">Select Earning: </label>
+                                            <select id="select-earning" class="form-control">
+                                                <option value="" disabled selected>please select earning range</option>
+                                                <option value="CE01">$1250/month or less</option>
+                                                <option value="CE02">$1251/month to $3333/month</option>
+                                                <option value="CE03">greater than $3333/month</option>
+                                            </select>
+                                        </div><!--/#form-earning-->
+                                        <div id="form-industry">
+                                            <label for="select-industry">Select Industry: </label>
+                                            <select id="select-industry" class="form-control">
+                                                <option value="" disabled selected>please select an industry</option>
+                                                <option value="CNS01">Agriculture, Forestry, Fishing and Hunting</option>
+                                                <option value="CNS02">Mining, Quarrying, and Oil and Gas Extraction</option>
+                                                <option value="CNS03">Utilities</option>
+                                                <option value="CNS04">Construction</option>
+                                                <option value="CNS05">Manufacturing</option>
+                                                <option value="CNS06">Wholesale Trade</option>
+                                                <option value="CNS07">Retail Trade</option>
+                                                <option value="CNS08">Transportation and Warehousing</option>
+                                                <option value="CNS09">Information</option>
+                                                <option value="CNS10">Finance and Insurance</option>
+                                                <option value="CNS11">Real Estate and Rental and Leasing</option>
+                                                <option value="CNS12">Professional, Scientific, and Technical Service</option>
+                                                <option value="CNS13">Management of Companies and Enterprises</option>
+                                                <option value="CNS14">Administrative and Support and Waste Management and Remediation Services</option>
+                                                <option value="CNS15">Educational Services</option>
+                                                <option value="CNS16">Health Care and Social Assistance</option>
+                                                <option value="CNS17">Arts, Entertainment, and Recreation</option>
+                                                <option value="CNS18">Accommodation and Food Services</option>
+                                                <option value="CNS19">Other Services [except Public Administration]</option>
+                                                <option value="CNS20">Public Administration</option>
+                                            </select>
+                                        </div><!--/#form-industry-->
+                                        <div id="form-race" class="no-disp">
+                                            <label for="select-race">Select Race: </label>
+                                            <select id="select-race" class="form-control">
+                                                <option value="" disabled selected>please select a race</option>
+                                                <option value="CR01">White, Alone</option>
+                                                <option value="CR02">Black or African American</option>
+                                                <option value="CR03">American Indian or Alaska Native Alone</option>
+                                                <option value="CR04">Asian Alone9</option>
+                                                <option value="CR05">Native Hawaiian or Other Pacific Islander Alone</option>
+                                                <option value="CR07">Two or More Race Groups</option>
+                                            </select>
+                                        </div><!--/#form-race-->
+                                        <div id="form-ethnicity" class="no-disp">
+                                            <label for="select-ethnicity">Select Ethnicity: </label>
+                                            <select id="select-ethnicity" class="form-control">
+                                                <option value="" disabled selected>please select ethnicity</option>
+                                                <option value="CT01">Not Hispanic or Latino</option>
+                                                <option value="CT02">Hispanic or Latino</option>
+                                            </select>
+                                        </div><!--/#form-ethnicity-->
+                                        <div id="form-education" class="no-disp">
+                                            <label for="select-education">Select Education Level: </label>
+                                            <select id="select-education" class="form-control">
+                                                <option value="" disabled selected>please select an education level</option>
+                                                <option value="CD01">Less than high school</option>
+                                                <option value="CD02">High school or equivalent, no college</option>
+                                                <option value="CD03">Some college or Associate degree</option>
+                                                <option value="CD04">Bachelor's degree or advanced degree</option>
+                                            </select>
+                                        </div><!--/#form-education-->
+                                        <div id="form-gender" class="no-disp">
+                                            <label for="select-gender">Select Gender: </label>
+                                            <select id="select-gender" class="form-control">
+                                                <option value="" disabled selected>please select gender</option>
+                                                <option value="CS01">Male</option>
+                                                <option value="CS02">Female</option>
+                                            </select>
+                                        </div><!--/#form-gender-->
+                                    </div><!--/.form-group-->
+                                    <button id="btn-submit" class="btn btn-primary" type="button">Show Map</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -199,6 +230,7 @@
         <!-- Bootstrap core JavaScript -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <!--<script src="//plenario.datamade.us/static/js/bootstrap.min.js"></script>-->
         
         <!-- Mapbox core JavaScript -->
         <script src='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.js'></script>
