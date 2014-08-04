@@ -6,6 +6,7 @@ $(window).resize(function () {
 }).resize();
 
 (function(){
+    var acc_layer = new L.FeatureGroup();
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
@@ -72,6 +73,7 @@ $(window).resize(function () {
     }
 
     function draw_delete(e){
+        acc_layer.clearLayers();
         drawnItems.clearLayers();
     }
 
@@ -172,11 +174,68 @@ $(window).resize(function () {
             education: $('#select-education').val(),
             gender: $('#select-gender').val(),
         }, function(data) {
+            acc_layer.clearLayers();
+            if (typeof acc_layer != 'undefined') {
+                map.removeLayer(acc_layer);
+            }
+            console.log(data.ret.features[0]);
             $('#map').spin(false);
-            console.log(data.ret.features[0].properties.GEOID10)
+            acc_layer.addLayer(L.geoJson(data.ret.features, {
+                style: acc_style,
+                onEachFeature: function(feature, layer) {
+                    var content = '<h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                    layer.bindLabel(content);
+                }
+            })).addTo(map);
+            map.fitBounds(acc_layer.getBounds());
         });
     }
 
     $('#btn-submit').on('click', show_map);
+
+    var map_colors1 = [
+        '#deebf7',
+        '#c6dbef',
+        '#9ecae1',
+        '#6baed6',
+        '#4292c6',
+        '#2171b5',
+        '#084594'
+    ]
+
+    var map_colors = [
+        '#f7fcf5',
+        '#e5f5e0',
+        '#c7e9c0',
+        '#a1d99b',
+        '#74c476',
+        '#41ab5d',
+        '#238b45',
+        '#005a32'
+    ]
+
+    function get_color(d) {
+        var color = 
+            d > 0.40 ? map_colors[7] :
+            d > 0.27 ? map_colors[6] :
+            d > 0.18 ? map_colors[5] :
+            d > 0.11 ? map_colors[4] :
+            d >  0.06 ? map_colors[3] :
+            d >  0.03 ? map_colors[2] :
+            d >  0 ? map_colors[1] :
+                     map_colors[0];
+        console.log('color:', color)
+        return color
+    }
+
+    function acc_style(feature) {
+        return {
+            fillColor: get_color(100*feature.properties.C000),
+            weight: 0,
+            opacity: 1,
+            color: 'white',
+            fillOpacity: 0.7
+        }
+    }
 
 })()

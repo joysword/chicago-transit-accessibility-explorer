@@ -37,12 +37,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Chicago Transit Accessibility Exploror</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Chicago Transit Accessibility Exploror</a>
             </div>
             <div class="navbar-collapse collapse pull-right">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="/">Home</a></li>
-                    <li class=""><a href="/about/">About</a></li>
+                    <li class="active"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class=""><a href="{{ url_for('about') }}">About</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -240,7 +240,7 @@
         <!-- moment.js, spin.js, etc -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
-        <script src="/static/js/jquery.spin.js"></script>
+        <script src="{{ url_for('static', filename='js/jquery.spin.js') }}"></script>
         <!--<script src="{{ url_for('static', filename='js/ejs_production.js') }}"></script>-->
         <!--<script src="{{ url_for('static', filename='js/jenks.js') }}"></script>-->
 
