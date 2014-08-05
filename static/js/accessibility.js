@@ -6,6 +6,7 @@ $(window).resize(function () {
 }).resize();
 
 (function(){
+    var cached_layers = Array();
     var acc_layer = new L.FeatureGroup();
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
 
@@ -161,7 +162,6 @@ $(window).resize(function () {
     function show_map(e) {
         if ($('#select-type').val() == "transit") {
             if ($('#select-time').val() == null) {
-                console.log('in');
                 $('#select-time').focus();
                 return
             }
@@ -172,39 +172,46 @@ $(window).resize(function () {
                     $('#select-age').focus();
                     return
                 }
+                break;
             case 'fi_earning':
                 if ($('#select-earning').val() == null) {
                     $('#select-earning').focus();
                     return
                 }
+                break;
             case 'fi_industry':
                 if ($('#select-industry').val() == null) {
                     $('#select-industry').focus();
                     return
                 }
+                break;
             case 'fi_race':
                 if ($('#select-race').val() == null) {
                     $('#select-race').focus();
                     return
                 }
+                break;
             case 'fi_ethnicity':
                 if ($('#select-ethnicity').val() == null) {
                     $('#select-ethnicity').focus();
                     return
                 }
+                break;
             case 'fi_education':
                 if ($('#select-education').val() == null) {
                     $('#select-education').focus();
                     return
                 }
+                break;
             case 'fi_gender':
                 if ($('#select-gender').val() == null) {
                     $('#select-gender').focus();
                     return
                 }
+                break;
         }
-        console.log('out switch');
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
+        console.log('start getting json');
         $.getJSON($SCRIPT_ROOT + '/showmap', {
             type: $('#select-type').val(),
             time: $('#select-time').val(),
@@ -218,18 +225,40 @@ $(window).resize(function () {
             education: $('#select-education').val(),
             gender: $('#select-gender').val(),
         }, function(data) {
-            acc_layer.clearLayers();
-            if (typeof acc_layer != 'undefined') {
-                map.removeLayer(acc_layer);
-            }
-            $('#map').spin(false);
-            acc_layer.addLayer(L.geoJson(data.ret.features, {
-                style: acc_style,
-                onEachFeature: function(feature, layer) {
-                    var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
-                    layer.bindLabel(content);
+            console.log('back from python');
+            if (data.ret == "visited") {
+                console.log('visited\nstart clearing');
+                acc_layer.clearLayers();
+                if (typeof acc_layer != 'undefined') {
+                    map.removeLayer(acc_layer);
                 }
-            })).addTo(map);
+                console.log('done');
+                $('#map').spin(false);
+                console.log('start adding layer');
+                acc_layer.addLayer(cached_layers[data.index]).addTo(map);
+                console.log('done');
+            }
+            else {
+                console.log('not visited\nstart clearing');
+                acc_layer.clearLayers();
+                if (typeof acc_layer != 'undefined') {
+                    map.removeLayer(acc_layer);
+                }
+                console.log('done');
+                console.log('start getting data');
+                cached_layers[cached_layers.length] = L.geoJson(data.ret.features, {
+                    style: acc_style,
+                    onEachFeature: function(feature, layer) {
+                        var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                        layer.bindLabel(content);
+                    }
+                })
+                console.log('done');
+                $('#map').spin(false);
+                console.log('start adding layer');
+                acc_layer.addLayer(cached_layers[cached_layers.length-1]).addTo(map);
+                console.log('done');
+            }
             map.fitBounds(acc_layer.getBounds());
         });
     }
