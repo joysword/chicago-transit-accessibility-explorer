@@ -160,51 +160,62 @@ $(window).resize(function () {
     });
 
     function show_map(e) {
-        if ($('#select-type').val() == "transit") {
-            if ($('#select-time').val() == null) {
+        var type =  $('#select-type').val();
+        var time =  $('#select-time').val();
+        var threshold =  $('#select-threshold').val();
+        var filter =  $('#select-filter').val();
+        var age =  $('#select-age').val();
+        var earning =  $('#select-earning').val();
+        var industry =  $('#select-industry').val();
+        var race =  $('#select-race').val();
+        var ethnicity =  $('#select-ethnicity').val();
+        var education =  $('#select-education').val();
+        var gender =  $('#select-gender').val();
+        if (type == "transit") {
+            if (time == null) {
                 $('#select-time').focus();
                 return
             }
         }
-        switch ($('#select-filter').val()) {
+        switch (filter) {
             case 'fi_age':
-                if ($('#select-age').val() == null) {
+                if (age == null) {
                     $('#select-age').focus();
                     return
                 }
                 break;
             case 'fi_earning':
-                if ($('#select-earning').val() == null) {
+                if (earning == null) {
                     $('#select-earning').focus();
                     return
                 }
                 break;
             case 'fi_industry':
-                if ($('#select-industry').val() == null) {
+                if (industry == null) {
                     $('#select-industry').focus();
                     return
                 }
                 break;
             case 'fi_race':
-                if ($('#select-race').val() == null) {
+                if (race == null) {
                     $('#select-race').focus();
                     return
                 }
                 break;
             case 'fi_ethnicity':
-                if ($('#select-ethnicity').val() == null) {
+                if (ethnicity == null) {
                     $('#select-ethnicity').focus();
                     return
                 }
                 break;
             case 'fi_education':
-                if ($('#select-education').val() == null) {
+                if (education == null) {
                     $('#select-education').focus();
                     return
                 }
                 break;
             case 'fi_gender':
-                if ($('#select-gender').val() == null) {
+                if (gender == null) {
                     $('#select-gender').focus();
                     return
                 }
@@ -212,55 +223,86 @@ $(window).resize(function () {
         }
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
         console.log('start getting json');
-        $.getJSON($SCRIPT_ROOT + '/showmap', {
-            type: $('#select-type').val(),
-            time: $('#select-time').val(),
-            threshold: $('#select-threshold').val(),
-            filter: $('#select-filter').val(),
-            age: $('#select-age').val(),
-            earning: $('#select-earning').val(),
-            industry: $('#select-industry').val(),
-            race: $('#select-race').val(),
-            ethnicity: $('#select-ethnicity').val(),
-            education: $('#select-education').val(),
-            gender: $('#select-gender').val(),
-        }, function(data) {
-            console.log('back from python');
-            if (data.ret == "visited") {
-                console.log('visited\nstart clearing');
-                acc_layer.clearLayers();
-                if (typeof acc_layer != 'undefined') {
-                    map.removeLayer(acc_layer);
-                }
-                console.log('done');
-                $('#map').spin(false);
-                console.log('start adding layer');
-                acc_layer.addLayer(cached_layers[data.index]).addTo(map);
-                console.log('done');
+
+        var filename = "static/json/acc_" + type + "_";
+        if (type == "transit") {
+            filename += time + "_";
+        }
+        filename += threshold + '.geojson'
+
+        console.log('file:',filename)
+
+        $.getJSON($SCRIPT_ROOT + filename, function(data) {
+            acc_layer.clearLayers();
+            if (typeof acc_layer != 'undefined') {
+                map.removeLayer(acc_layer);
             }
-            else {
-                console.log('not visited\nstart clearing');
-                acc_layer.clearLayers();
-                if (typeof acc_layer != 'undefined') {
-                    map.removeLayer(acc_layer);
+            console.log('done');
+            console.log('start getting data');
+            var layerrr = L.geoJson(data.features, {
+                style: acc_style,
+                onEachFeature: function(feature, layer) {
+                    var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                    layer.bindLabel(content);
                 }
-                console.log('done');
-                console.log('start getting data');
-                cached_layers[cached_layers.length] = L.geoJson(data.ret.features, {
-                    style: acc_style,
-                    onEachFeature: function(feature, layer) {
-                        var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
-                        layer.bindLabel(content);
-                    }
-                })
-                console.log('done');
-                $('#map').spin(false);
-                console.log('start adding layer');
-                acc_layer.addLayer(cached_layers[cached_layers.length-1]).addTo(map);
-                console.log('done');
-            }
+            })
+            console.log('done');
+            $('#map').spin(false);
+            console.log('start adding layer');
+            acc_layer.addLayer(layerrr).addTo(map);
+            console.log('done');
             map.fitBounds(acc_layer.getBounds());
         });
+
+        // $.getJSON($SCRIPT_ROOT + '/showmap', {
+        //     type: $('#select-type').val(),
+        //     time: $('#select-time').val(),
+        //     threshold: $('#select-threshold').val(),
+        //     filter: $('#select-filter').val(),
+        //     age: $('#select-age').val(),
+        //     earning: $('#select-earning').val(),
+        //     industry: $('#select-industry').val(),
+        //     race: $('#select-race').val(),
+        //     ethnicity: $('#select-ethnicity').val(),
+        //     education: $('#select-education').val(),
+        //     gender: $('#select-gender').val(),
+        // }, function(data) {
+        //     console.log('back from python');
+        //     if (data.ret == "visited") {
+        //         console.log('visited\nstart clearing');
+        //         acc_layer.clearLayers();
+        //         if (typeof acc_layer != 'undefined') {
+        //             map.removeLayer(acc_layer);
+        //         }
+        //         console.log('done');
+        //         $('#map').spin(false);
+        //         console.log('start adding layer');
+        //         acc_layer.addLayer(cached_layers[data.index]).addTo(map);
+        //         console.log('done');
+        //     }
+        //     else {
+        //         console.log('not visited\nstart clearing');
+        //         acc_layer.clearLayers();
+        //         if (typeof acc_layer != 'undefined') {
+        //             map.removeLayer(acc_layer);
+        //         }
+        //         console.log('done');
+        //         console.log('start getting data');
+        //         cached_layers[cached_layers.length] = L.geoJson(data.ret.features, {
+        //             style: acc_style,
+        //             onEachFeature: function(feature, layer) {
+        //                 var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+        //                 layer.bindLabel(content);
+        //             }
+        //         })
+        //         console.log('done');
+        //         $('#map').spin(false);
+        //         console.log('start adding layer');
+        //         acc_layer.addLayer(cached_layers[cached_layers.length-1]).addTo(map);
+        //         console.log('done');
+        //     }
+        //     map.fitBounds(acc_layer.getBounds());
+        // });
     }
 
     $('#btn-submit').on('click', show_map);
