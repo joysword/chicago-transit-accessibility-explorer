@@ -7,6 +7,7 @@ $(window).resize(function () {
 
 (function(){
     var cached_layers = Object();
+    var cached_json = Object();
     var acc_layer = new L.FeatureGroup();
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
 
@@ -169,6 +170,7 @@ $(window).resize(function () {
         }
     });
 
+    // called when the button is clicked
     function show_map(e) {
         var type =  $('#select-type').val();
         var time =  $('#select-time').val();
@@ -187,49 +189,59 @@ $(window).resize(function () {
                 return
             }
         }
+        var cache_index;
         switch (filter) {
             case 'fi_age':
                 if (age == null) {
                     $('#select-age').focus();
                     return
                 }
+                cache_index = age;
                 break;
             case 'fi_earning':
                 if (earning == null) {
                     $('#select-earning').focus();
                     return
                 }
+                cache_index = earning;
                 break;
             case 'fi_industry':
                 if (industry == null) {
                     $('#select-industry').focus();
                     return
                 }
+                cache_index = industry;
                 break;
             case 'fi_race':
                 if (race == null) {
                     $('#select-race').focus();
                     return
                 }
+                cache_index = race;
                 break;
             case 'fi_ethnicity':
                 if (ethnicity == null) {
                     $('#select-ethnicity').focus();
                     return
                 }
+                cache_index = ethnicity;
                 break;
             case 'fi_education':
                 if (education == null) {
                     $('#select-education').focus();
                     return
                 }
+                cache_index = education;
                 break;
             case 'fi_gender':
                 if (gender == null) {
                     $('#select-gender').focus();
                     return
                 }
+                cache_index = gender;
                 break;
+            default:
+                cache_index = "C000"
         }
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
@@ -239,30 +251,56 @@ $(window).resize(function () {
         }
         filename += threshold + '.geojson'
 
-        if (filename in cached_layers) {
+        cache_index += '_' + filename
+
+        // if the layer is cached
+        if (cache_index in cached_layers) {
+
             acc_layer.clearLayers();
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
             $('#map').spin(false);
-            acc_layer.addLayer(cached_layers[filename]).addTo(map);
+            acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             map.fitBounds(acc_layer.getBounds());
         }
+        // if the geojson file is cached
+        else if (filename in cached_json) {
+            cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
+                style: acc_style,
+                onEachFeature: function(feature, layer) {
+                    var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                    layer.bindLabel(content);
+                }
+            });
+            
+            acc_layer.clearLayers();
+            if (typeof acc_layer != 'undefined') {
+                map.removeLayer(acc_layer);
+            }
+            $('#map').spin(false);
+            acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
+            map.fitBounds(acc_layer.getBounds());
+        }
+        // neither cached
         else {
             $.getJSON($SCRIPT_ROOT + filename, function(data) {
-                acc_layer.clearLayers();
-                if (typeof acc_layer != 'undefined') {
-                    map.removeLayer(acc_layer);
-                }
-                cached_layers[filename] = L.geoJson(data.features, {
+                cached_json[filename] = data;
+                
+                cached_layers[cache_index] = L.geoJson(data.features, {
                     style: acc_style,
                     onEachFeature: function(feature, layer) {
                         var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
                         layer.bindLabel(content);
                     }
-                })
+                });
+                
+                acc_layer.clearLayers();
+                if (typeof acc_layer != 'undefined') {
+                    map.removeLayer(acc_layer);
+                }
                 $('#map').spin(false);
-                acc_layer.addLayer(cached_layers[filename]).addTo(map);
+                acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
                 map.fitBounds(acc_layer.getBounds());
             });
         }
