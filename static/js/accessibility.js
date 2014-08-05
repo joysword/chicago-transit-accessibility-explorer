@@ -84,7 +84,6 @@ $(window).resize(function () {
                 $('#form-time').addClass('no-disp');
                 break;
             case "transit":
-                console.log('transit');
                 $('#form-time').removeClass('no-disp');
                 break;
         }
@@ -160,6 +159,51 @@ $(window).resize(function () {
     });
 
     function show_map(e) {
+        if ($('#select-type').val() == "transit") {
+            if ($('#select-time').val() == null) {
+                console.log('in');
+                $('#select-time').focus();
+                return
+            }
+        }
+        switch ($('#select-filter').val()) {
+            case 'fi_age':
+                if ($('#select-age').val() == null) {
+                    $('#select-age').focus();
+                    return
+                }
+            case 'fi_earning':
+                if ($('#select-earning').val() == null) {
+                    $('#select-earning').focus();
+                    return
+                }
+            case 'fi_industry':
+                if ($('#select-industry').val() == null) {
+                    $('#select-industry').focus();
+                    return
+                }
+            case 'fi_race':
+                if ($('#select-race').val() == null) {
+                    $('#select-race').focus();
+                    return
+                }
+            case 'fi_ethnicity':
+                if ($('#select-ethnicity').val() == null) {
+                    $('#select-ethnicity').focus();
+                    return
+                }
+            case 'fi_education':
+                if ($('#select-education').val() == null) {
+                    $('#select-education').focus();
+                    return
+                }
+            case 'fi_gender':
+                if ($('#select-gender').val() == null) {
+                    $('#select-gender').focus();
+                    return
+                }
+        }
+        console.log('out switch');
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
         $.getJSON($SCRIPT_ROOT + '/showmap', {
             type: $('#select-type').val(),
@@ -178,12 +222,11 @@ $(window).resize(function () {
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
-            console.log(data.ret.features[0]);
             $('#map').spin(false);
             acc_layer.addLayer(L.geoJson(data.ret.features, {
                 style: acc_style,
                 onEachFeature: function(feature, layer) {
-                    var content = '<h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                    var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
                     layer.bindLabel(content);
                 }
             })).addTo(map);
@@ -224,7 +267,6 @@ $(window).resize(function () {
             d >  0.03 ? map_colors[2] :
             d >  0 ? map_colors[1] :
                      map_colors[0];
-        console.log('color:', color)
         return color
     }
 

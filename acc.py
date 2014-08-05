@@ -29,8 +29,17 @@ def showmap():
 	education = request.args.get('education')
 	gender = request.args.get('gender')
 
-	f = open(os.path.join(os.path.dirname(__file__), 'static/json/acc_auto_300.geojson'), 'r')
+	# filename = 'static/json/acc_'
 
+	# if transit == 'auto':
+	# 	filename = filename + 'auto_' + threshold + '.geojson'
+	# else:
+	# 	filename = filename + 'transit_' + time + '_' + threshold + '.geojson'
+
+	# f = open(os.path.join(os.path.dirname(__file__), filename), 'r')
+
+	f = open(os.path.join(os.path.dirname(__file__), 'static/json/acc_auto_300.geojson'), 'r')
+	
 	ret = json.load(f)
 
 	return jsonify(ret=ret)
