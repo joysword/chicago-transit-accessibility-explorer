@@ -11,6 +11,49 @@ $(window).resize(function () {
     var acc_layer = new L.FeatureGroup();
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
 
+    var total_jobs = Object();
+    total_jobs['C000'] = 7799056;
+    total_jobs['CA01'] = 1742396;
+    total_jobs['CA02'] = 4499672;
+    total_jobs['CA03'] = 1556988;
+    total_jobs['CE01'] = 1792024;
+    total_jobs['CE02'] = 2554522;
+    total_jobs['CE03'] = 3452510;
+    total_jobs['CNS01'] = 5434;
+    total_jobs['CNS02'] = 2584;
+    total_jobs['CNS03'] = 31568;
+    total_jobs['CNS04'] = 234456;
+    total_jobs['CNS05'] = 743752;
+    total_jobs['CNS06'] = 447880;
+    total_jobs['CNS07'] = 838476;
+    total_jobs['CNS08'] = 339312;
+    total_jobs['CNS09'] = 175902;
+    total_jobs['CNS10'] = 440452;
+    total_jobs['CNS11'] = 115154;
+    total_jobs['CNS12'] = 597846;
+    total_jobs['CNS13'] = 154980;
+    total_jobs['CNS14'] = 594738;
+    total_jobs['CNS15'] = 759636;
+    total_jobs['CNS16'] = 997110;
+    total_jobs['CNS17'] = 155164;
+    total_jobs['CNS18'] = 600296;
+    total_jobs['CNS19'] = 293726;
+    total_jobs['CNS20'] = 270590;
+    total_jobs['CR01'] = 6078246;
+    total_jobs['CR02'] = 1078502;
+    total_jobs['CR03'] = 32466;
+    total_jobs['CR04'] = 510526;
+    total_jobs['CR05'] = 9548;
+    total_jobs['CR07'] = 89768;
+    total_jobs['CT01'] = 6647576;
+    total_jobs['CT02'] = 1151480;
+    total_jobs['CD01'] = 702402;
+    total_jobs['CD02'] = 1374192;
+    total_jobs['CD03'] = 1821398;
+    total_jobs['CD04'] = 2158668;
+    total_jobs['CS01'] = 3872382;
+    total_jobs['CS02'] = 3926674;
+
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
@@ -189,59 +232,59 @@ $(window).resize(function () {
                 return
             }
         }
-        var cache_index;
+        var category;
         switch (filter) {
             case 'fi_age':
                 if (age == null) {
                     $('#select-age').focus();
                     return
                 }
-                cache_index = age;
+                category = age;
                 break;
             case 'fi_earning':
                 if (earning == null) {
                     $('#select-earning').focus();
                     return
                 }
-                cache_index = earning;
+                category = earning;
                 break;
             case 'fi_industry':
                 if (industry == null) {
                     $('#select-industry').focus();
                     return
                 }
-                cache_index = industry;
+                category = industry;
                 break;
             case 'fi_race':
                 if (race == null) {
                     $('#select-race').focus();
                     return
                 }
-                cache_index = race;
+                category = race;
                 break;
             case 'fi_ethnicity':
                 if (ethnicity == null) {
                     $('#select-ethnicity').focus();
                     return
                 }
-                cache_index = ethnicity;
+                category = ethnicity;
                 break;
             case 'fi_education':
                 if (education == null) {
                     $('#select-education').focus();
                     return
                 }
-                cache_index = education;
+                category = education;
                 break;
             case 'fi_gender':
                 if (gender == null) {
                     $('#select-gender').focus();
                     return
                 }
-                cache_index = gender;
+                category = gender;
                 break;
             default:
-                cache_index = "C000"
+                category = "C000"
         }
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
@@ -251,7 +294,7 @@ $(window).resize(function () {
         }
         filename += threshold + '.geojson'
 
-        cache_index += '_' + filename
+        var cache_index = category + '_' + filename
 
         // if the layer is cached
         if (cache_index in cached_layers) {
@@ -269,7 +312,7 @@ $(window).resize(function () {
             cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
                 style: acc_style,
                 onEachFeature: function(feature, layer) {
-                    var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                    var content = 'Accessibility: ' + 100*feature.properties[category] + '% of ' + total_jobs[category] + ' jobs';
                     layer.bindLabel(content);
                 }
             });
@@ -290,7 +333,7 @@ $(window).resize(function () {
                 cached_layers[cache_index] = L.geoJson(data.features, {
                     style: acc_style,
                     onEachFeature: function(feature, layer) {
-                        var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                        var content = 'Accessibility: ' + 100*feature.properties[category] + '% of ' + total_jobs[category] + ' jobs';
                         layer.bindLabel(content);
                     }
                 });
@@ -344,7 +387,7 @@ $(window).resize(function () {
 
     function acc_style(feature) {
         return {
-            fillColor: get_color(100*feature.properties.C000),
+            fillColor: get_color(100*feature.properties[category]),
             weight: 0,
             opacity: 1,
             color: 'white',
