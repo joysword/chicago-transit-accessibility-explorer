@@ -79,7 +79,7 @@
                                                 <option value="5">5 am</option>
                                                 <option value="6">6 am</option>
                                                 <option value="7">7 am</option>
-                                                <option value="8">8 am</option>
+                                                <option value="8" selected>8 am</option>
                                                 <option value="9">9 am</option>
                                                 <option value="10">10 am</option>
                                                 <option value="11">11 am</option>
@@ -107,7 +107,7 @@
                                                 <option value="900">15 minutes</option>
                                                 <option value="1200">20 minutes</option>
                                                 <option value="1500">25 minutes</option>
-                                                <option value="1800" selected=true>30 minutes</option>
+                                                <option value="1800" selected>30 minutes</option>
                                                 <option value="2100">35 minutes</option>
                                                 <option value="2400">40 minutes</option>
                                                 <option value="2700">45 minutes</option>
@@ -121,9 +121,10 @@
                                         <div id="form-filter">
                                             <label for="select-filter">Select Filter: </label>
                                             <select id="select-filter" class="form-control">
+                                                <option value="fi_all" selected>All Jobs</option>
                                                 <option value="fi_age">By Age</option>
                                                 <option value="fi_earning">By Earning</option>
-                                                <option value="fi_industry" selected=true>By Industry</option>
+                                                <option value="fi_industry">By Industry</option>
                                                 <option value="fi_race">By Race</option>
                                                 <option value="fi_ethnicity">By Ethnicity</option>
                                                 <option value="fi_education">By Education Level</option>
@@ -150,7 +151,7 @@
                                                 <option value="CE03">greater than $3333/month</option>
                                             </select>
                                         </div><!--/#form-earning-->
-                                        <div id="form-industry">
+                                        <div id="form-industry" class="no-disp">
                                             <label for="select-industry">Select Industry: </label>
                                             <select id="select-industry" class="form-control">
                                                 <option value="" disabled selected>please select an industry</option>
@@ -215,7 +216,7 @@
                                             </select>
                                         </div><!--/#form-gender-->
                                     </div><!--/.form-group-->
-                                    <button id="btn-submit" class="btn btn-primary" type="button">Show Map</button>
+                                    <button id="btn-submit" class="btn btn-primary" type="button"><i class="fa fa-search"></i>  Show Map</button>
                                 </form>
                             </div>
                         </div>

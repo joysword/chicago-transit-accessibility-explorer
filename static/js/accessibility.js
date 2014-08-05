@@ -14,6 +14,8 @@ $(window).resize(function () {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
 
+    L.control.scale().addTo(map);
+
     var drawnItems = L.featureGroup().addTo(map);
 
     var drawControl = new L.Control.Draw({
@@ -156,6 +158,14 @@ $(window).resize(function () {
                 $('#form-education').attr('class', 'no-disp');
                 $('#form-gender').attr('class', '');
                 break;
+            default:
+                $('#form-age').attr('class', 'no-disp');
+                $('#form-earning').attr('class', 'no-disp');
+                $('#form-industry').attr('class', 'no-disp');
+                $('#form-race').attr('class', 'no-disp');
+                $('#form-ethnicity').attr('class', 'no-disp');
+                $('#form-education').attr('class', 'no-disp');
+                $('#form-gender').attr('class', 'no-disp');
         }
     });
 
@@ -247,7 +257,7 @@ $(window).resize(function () {
                 cached_layers[filename] = L.geoJson(data.features, {
                     style: acc_style,
                     onEachFeature: function(feature, layer) {
-                        var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                        var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
                         layer.bindLabel(content);
                     }
                 })
