@@ -6,7 +6,7 @@ $(window).resize(function () {
 }).resize();
 
 (function(){
-    var cached_layers = Array();
+    var cached_layers = Object();
     var acc_layer = new L.FeatureGroup();
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
 
@@ -222,7 +222,6 @@ $(window).resize(function () {
                 break;
         }
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
-        console.log('start getting json');
 
         var filename = "static/json/acc_" + type + "_";
         if (type == "transit") {
@@ -230,79 +229,33 @@ $(window).resize(function () {
         }
         filename += threshold + '.geojson'
 
-        console.log('file:',filename)
-
-        $.getJSON($SCRIPT_ROOT + filename, function(data) {
+        if (filename in cached_layers) {
             acc_layer.clearLayers();
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
-            console.log('done');
-            console.log('start getting data');
-            var layerrr = L.geoJson(data.features, {
-                style: acc_style,
-                onEachFeature: function(feature, layer) {
-                    var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
-                    layer.bindLabel(content);
-                }
-            })
-            console.log('done');
             $('#map').spin(false);
-            console.log('start adding layer');
-            acc_layer.addLayer(layerrr).addTo(map);
-            console.log('done');
+            acc_layer.addLayer(cached_layers[filename]).addTo(map);
             map.fitBounds(acc_layer.getBounds());
-        });
-
-        // $.getJSON($SCRIPT_ROOT + '/showmap', {
-        //     type: $('#select-type').val(),
-        //     time: $('#select-time').val(),
-        //     threshold: $('#select-threshold').val(),
-        //     filter: $('#select-filter').val(),
-        //     age: $('#select-age').val(),
-        //     earning: $('#select-earning').val(),
-        //     industry: $('#select-industry').val(),
-        //     race: $('#select-race').val(),
-        //     ethnicity: $('#select-ethnicity').val(),
-        //     education: $('#select-education').val(),
-        //     gender: $('#select-gender').val(),
-        // }, function(data) {
-        //     console.log('back from python');
-        //     if (data.ret == "visited") {
-        //         console.log('visited\nstart clearing');
-        //         acc_layer.clearLayers();
-        //         if (typeof acc_layer != 'undefined') {
-        //             map.removeLayer(acc_layer);
-        //         }
-        //         console.log('done');
-        //         $('#map').spin(false);
-        //         console.log('start adding layer');
-        //         acc_layer.addLayer(cached_layers[data.index]).addTo(map);
-        //         console.log('done');
-        //     }
-        //     else {
-        //         console.log('not visited\nstart clearing');
-        //         acc_layer.clearLayers();
-        //         if (typeof acc_layer != 'undefined') {
-        //             map.removeLayer(acc_layer);
-        //         }
-        //         console.log('done');
-        //         console.log('start getting data');
-        //         cached_layers[cached_layers.length] = L.geoJson(data.ret.features, {
-        //             style: acc_style,
-        //             onEachFeature: function(feature, layer) {
-        //                 var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
-        //                 layer.bindLabel(content);
-        //             }
-        //         })
-        //         console.log('done');
-        //         $('#map').spin(false);
-        //         console.log('start adding layer');
-        //         acc_layer.addLayer(cached_layers[cached_layers.length-1]).addTo(map);
-        //         console.log('done');
-        //     }
-        //     map.fitBounds(acc_layer.getBounds());
-        // });
+        }
+        else {
+            $.getJSON($SCRIPT_ROOT + filename, function(data) {
+                acc_layer.clearLayers();
+                if (typeof acc_layer != 'undefined') {
+                    map.removeLayer(acc_layer);
+                }
+                cached_layers[filename] = L.geoJson(data.features, {
+                    style: acc_style,
+                    onEachFeature: function(feature, layer) {
+                        var content = '<h4>GEOID: ' + feature.properties.GEOID10 + '</h4><br><h4>Accessibility: ' + 100*feature.properties.C000 + '%</h4>';
+                        layer.bindLabel(content);
+                    }
+                })
+                $('#map').spin(false);
+                acc_layer.addLayer(cached_layers[filename]).addTo(map);
+                map.fitBounds(acc_layer.getBounds());
+            });
+        }
     }
 
     $('#btn-submit').on('click', show_map);
