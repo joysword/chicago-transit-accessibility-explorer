@@ -8,8 +8,12 @@ $(window).resize(function () {
 (function(){
     var cached_layers = Object();
     var cached_json = Object();
+    var cached_jenks = Object();
     var acc_layer = new L.FeatureGroup();
-    var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
+    var jenks_cutoffs;
+    var category;
+    var filename;
+    var cache_index;
 
     var total_jobs = Object();
     total_jobs['C000'] = 7799056;
@@ -54,11 +58,29 @@ $(window).resize(function () {
     total_jobs['CS01'] = 3872382;
     total_jobs['CS02'] = 3926674;
 
+    var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
+
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
 
     L.control.scale().addTo(map);
+
+    var legend = L.control({position: 'bottomright'});
+    legend.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'legend');
+        var labels = [];
+        var low;
+        var high;
+        $.each(cached_jenks[cache_index], function(i, v) {
+            low = v;
+            high = cached_jenks[cache_index][i+1];
+            labels.push('<i style="background:' + get_color(low) + '"></i>' +
+                low.toFixed(3) + '%' + (high ? '&ndash;' + high.toFixed(3) + '%': '+'));
+        });
+        div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
+        return div;
+    }
 
     var drawnItems = L.featureGroup().addTo(map);
 
@@ -136,7 +158,8 @@ $(window).resize(function () {
         }
     });
 
-    // which filter? age, earning, industry, race, ethnicity, education or gender
+    // which filter to show?
+    // age, earning, industry, race, ethnicity, education or gender
     $('#select-filter').change(function(){
         switch (this.value) {
             case "fi_age":
@@ -232,7 +255,6 @@ $(window).resize(function () {
                 return
             }
         }
-        var category;
         switch (filter) {
             case 'fi_age':
                 if (age == null) {
@@ -288,63 +310,119 @@ $(window).resize(function () {
         }
         $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
-        var filename = "static/json/acc_" + type + "_";
+        filename = "static/json/acc_" + type + "_";
+
         if (type == "transit") {
             filename += time + "_";
         }
-        filename += threshold + '.geojson'
+        filename += threshold + '.geojson';
 
-        var cache_index = category + '_' + filename
+        cache_index = category + '_' + filename;
 
         // if the layer is cached
         if (cache_index in cached_layers) {
-
+            console.log('layer cached');
+            
+            // block 3
+            $('#map').spin(false);
+            try {
+                legend.removeFrom(map);
+            } catch(e) {};
             acc_layer.clearLayers();
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
-            $('#map').spin(false);
+            
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
+            legend.addTo(map);
             map.fitBounds(acc_layer.getBounds());
+            // end block 3
+
         }
         // if the geojson file is cached
         else if (filename in cached_json) {
+            console.log('layer not cached, but json cached');
+
+            // block 2
+            var val = [];
+            $.each(cached_json[filename].features, function(i, v) {
+                val.push(100*v.properties[category]);
+            });
+            jenks_cutoffs = jenks(val, 7);
+            jenks_cutoffs[0] = 0;
+            jenks_cutoffs.pop();
+            cached_jenks[cache_index] = jenks_cutoffs;
+
             cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
                 style: acc_style,
+                filter: acc_filter,
                 onEachFeature: function(feature, layer) {
                     var content = 'Accessibility: ' + 100*feature.properties[category] + '% of ' + total_jobs[category] + ' jobs';
                     layer.bindLabel(content);
                 }
             });
-            
+            // end block 2
+
+            // block 3
+            $('#map').spin(false);
+            try {
+                legend.removeFrom(map);
+            } catch(e) {};
             acc_layer.clearLayers();
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
-            $('#map').spin(false);
+            
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
+            legend.addTo(map);
             map.fitBounds(acc_layer.getBounds());
+            // end block 3
+
         }
-        // neither cached
         else {
+            console.log('nothing cached');
+
             $.getJSON($SCRIPT_ROOT + filename, function(data) {
+
+                // block 1
                 cached_json[filename] = data;
-                
-                cached_layers[cache_index] = L.geoJson(data.features, {
+                // end block 1
+
+                // block 2
+                var val = [];
+                $.each(cached_json[filename].features, function(i, v) {
+                    val.push(v.properties[category]);
+                });
+                jenks_cutoffs = jenks(val, 7);
+                jenks_cutoffs[0] = 0;
+                jenks_cutoffs.pop();
+                cached_jenks[cache_index] = jenks_cutoffs;
+
+                cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
                     style: acc_style,
+                    filter: acc_filter,
                     onEachFeature: function(feature, layer) {
                         var content = 'Accessibility: ' + 100*feature.properties[category] + '% of ' + total_jobs[category] + ' jobs';
                         layer.bindLabel(content);
                     }
                 });
-                
+                // end block 2
+
+                // block 3
+                $('#map').spin(false);
+                try {
+                    legend.removeFrom(map);
+                } catch(e) {};
                 acc_layer.clearLayers();
                 if (typeof acc_layer != 'undefined') {
                     map.removeLayer(acc_layer);
                 }
-                $('#map').spin(false);
+                
                 acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
+                legend.addTo(map);
                 map.fitBounds(acc_layer.getBounds());
+                // end block 3
+
             });
         }
     }
@@ -374,13 +452,13 @@ $(window).resize(function () {
 
     function get_color(d) {
         var color = 
-            d > 0.40 ? map_colors[7] :
-            d > 0.27 ? map_colors[6] :
-            d > 0.18 ? map_colors[5] :
-            d > 0.11 ? map_colors[4] :
-            d >  0.06 ? map_colors[3] :
-            d >  0.03 ? map_colors[2] :
-            d >  0 ? map_colors[1] :
+            d > jenks_cutoffs[6] ? map_colors[7] :
+            d > jenks_cutoffs[5] ? map_colors[6] :
+            d > jenks_cutoffs[4] ? map_colors[5] :
+            d > jenks_cutoffs[3] ? map_colors[4] :
+            d > jenks_cutoffs[2] ? map_colors[3] :
+            d > jenks_cutoffs[1] ? map_colors[2] :
+            d > jenks_cutoffs[0] ? map_colors[1] :
                      map_colors[0];
         return color
     }
@@ -393,6 +471,13 @@ $(window).resize(function () {
             color: 'white',
             fillOpacity: 0.7
         }
+    }
+
+    function acc_filter(feature, layer) {
+        var show =  feature.properties.GEOID10 == '170979900000' ? false :
+            feature.properties.GEOID10 == '170319900000' ? false :
+            true;
+        return show;
     }
 
 })()
