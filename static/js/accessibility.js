@@ -58,7 +58,7 @@ $(window).resize(function () {
     total_jobs['CS01'] = 3872382;
     total_jobs['CS02'] = 3926674;
 
-    var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);;
+    var map = L.map('map', {center:[41.8910,-87.6839], zoom: 11});
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
@@ -308,7 +308,6 @@ $(window).resize(function () {
             default:
                 category = "C000"
         }
-        $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
         filename = "static/json/acc_" + type + "_";
 
@@ -324,7 +323,6 @@ $(window).resize(function () {
             console.log('layer cached');
             
             // block 3
-            $('#map').spin(false);
             try {
                 legend.removeFrom(map);
             } catch(e) {};
@@ -335,7 +333,7 @@ $(window).resize(function () {
             
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             legend.addTo(map);
-            map.fitBounds(acc_layer.getBounds());
+            //map.fitBounds(acc_layer.getBounds());
             // end block 3
 
         }
@@ -364,7 +362,6 @@ $(window).resize(function () {
             // end block 2
 
             // block 3
-            $('#map').spin(false);
             try {
                 legend.removeFrom(map);
             } catch(e) {};
@@ -375,12 +372,14 @@ $(window).resize(function () {
             
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             legend.addTo(map);
-            map.fitBounds(acc_layer.getBounds());
+            //map.fitBounds(acc_layer.getBounds());
             // end block 3
 
         }
         else {
             console.log('nothing cached');
+
+            $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
             $.getJSON($SCRIPT_ROOT + filename, function(data) {
 
@@ -391,7 +390,7 @@ $(window).resize(function () {
                 // block 2
                 var val = [];
                 $.each(cached_json[filename].features, function(i, v) {
-                    val.push(v.properties[category]);
+                    val.push(100*v.properties[category]);
                 });
                 jenks_cutoffs = jenks(val, 7);
                 jenks_cutoffs[0] = 0;
@@ -408,8 +407,9 @@ $(window).resize(function () {
                 });
                 // end block 2
 
-                // block 3
                 $('#map').spin(false);
+
+                // block 3
                 try {
                     legend.removeFrom(map);
                 } catch(e) {};
@@ -420,7 +420,7 @@ $(window).resize(function () {
                 
                 acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
                 legend.addTo(map);
-                map.fitBounds(acc_layer.getBounds());
+                //map.fitBounds(acc_layer.getBounds());
                 // end block 3
 
             });
@@ -452,13 +452,13 @@ $(window).resize(function () {
 
     function get_color(d) {
         var color = 
-            d > jenks_cutoffs[6] ? map_colors[7] :
-            d > jenks_cutoffs[5] ? map_colors[6] :
-            d > jenks_cutoffs[4] ? map_colors[5] :
-            d > jenks_cutoffs[3] ? map_colors[4] :
-            d > jenks_cutoffs[2] ? map_colors[3] :
-            d > jenks_cutoffs[1] ? map_colors[2] :
-            d > jenks_cutoffs[0] ? map_colors[1] :
+            d > cached_jenks[cache_index][6] ? map_colors[7] :
+            d > cached_jenks[cache_index][5] ? map_colors[6] :
+            d > cached_jenks[cache_index][4] ? map_colors[5] :
+            d > cached_jenks[cache_index][3] ? map_colors[4] :
+            d > cached_jenks[cache_index][2] ? map_colors[3] :
+            d > cached_jenks[cache_index][1] ? map_colors[2] :
+            d > cached_jenks[cache_index][0] ? map_colors[1] :
                      map_colors[0];
         return color
     }
