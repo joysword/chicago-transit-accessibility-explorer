@@ -6,57 +6,57 @@ $(window).resize(function () {
 }).resize();
 
 (function(){
-    var cached_layers = Object();
-    var cached_json = Object();
-    var cached_jenks = Object();
+    var cached_layers = {};
+    var cached_json = {};
+    var cached_jenks = {};
     var acc_layer = new L.FeatureGroup();
     var jenks_cutoffs;
     var category;
     var filename;
     var cache_index;
 
-    var total_jobs = Object();
-    total_jobs['C000'] = 7799056;
-    total_jobs['CA01'] = 1742396;
-    total_jobs['CA02'] = 4499672;
-    total_jobs['CA03'] = 1556988;
-    total_jobs['CE01'] = 1792024;
-    total_jobs['CE02'] = 2554522;
-    total_jobs['CE03'] = 3452510;
-    total_jobs['CNS01'] = 5434;
-    total_jobs['CNS02'] = 2584;
-    total_jobs['CNS03'] = 31568;
-    total_jobs['CNS04'] = 234456;
-    total_jobs['CNS05'] = 743752;
-    total_jobs['CNS06'] = 447880;
-    total_jobs['CNS07'] = 838476;
-    total_jobs['CNS08'] = 339312;
-    total_jobs['CNS09'] = 175902;
-    total_jobs['CNS10'] = 440452;
-    total_jobs['CNS11'] = 115154;
-    total_jobs['CNS12'] = 597846;
-    total_jobs['CNS13'] = 154980;
-    total_jobs['CNS14'] = 594738;
-    total_jobs['CNS15'] = 759636;
-    total_jobs['CNS16'] = 997110;
-    total_jobs['CNS17'] = 155164;
-    total_jobs['CNS18'] = 600296;
-    total_jobs['CNS19'] = 293726;
-    total_jobs['CNS20'] = 270590;
-    total_jobs['CR01'] = 6078246;
-    total_jobs['CR02'] = 1078502;
-    total_jobs['CR03'] = 32466;
-    total_jobs['CR04'] = 510526;
-    total_jobs['CR05'] = 9548;
-    total_jobs['CR07'] = 89768;
-    total_jobs['CT01'] = 6647576;
-    total_jobs['CT02'] = 1151480;
-    total_jobs['CD01'] = 702402;
-    total_jobs['CD02'] = 1374192;
-    total_jobs['CD03'] = 1821398;
-    total_jobs['CD04'] = 2158668;
-    total_jobs['CS01'] = 3872382;
-    total_jobs['CS02'] = 3926674;
+    var total_jobs = {};
+    total_jobs['C000'] = 3899528;
+    total_jobs['CA01'] = 871198;
+    total_jobs['CA02'] = 2249836;
+    total_jobs['CA03'] = 778494;
+    total_jobs['CE01'] = 896012;
+    total_jobs['CE02'] = 1277261;
+    total_jobs['CE03'] = 1726255;
+    total_jobs['CNS01'] = 2717;
+    total_jobs['CNS02'] = 1292;
+    total_jobs['CNS03'] = 15784;
+    total_jobs['CNS04'] = 117228;
+    total_jobs['CNS05'] = 371876;
+    total_jobs['CNS06'] = 223940;
+    total_jobs['CNS07'] = 419238;
+    total_jobs['CNS08'] = 169656;
+    total_jobs['CNS09'] = 87951;
+    total_jobs['CNS10'] = 220226;
+    total_jobs['CNS11'] = 57577;
+    total_jobs['CNS12'] = 298923;
+    total_jobs['CNS13'] = 77490;
+    total_jobs['CNS14'] = 297369;
+    total_jobs['CNS15'] = 379818;
+    total_jobs['CNS16'] = 498555;
+    total_jobs['CNS17'] = 77582;
+    total_jobs['CNS18'] = 300148;
+    total_jobs['CNS19'] = 146863;
+    total_jobs['CNS20'] = 135295;
+    total_jobs['CR01'] = 3039123;
+    total_jobs['CR02'] = 539251;
+    total_jobs['CR03'] = 16233;
+    total_jobs['CR04'] = 255263;
+    total_jobs['CR05'] = 4774;
+    total_jobs['CR07'] = 44884;
+    total_jobs['CT01'] = 3323788;
+    total_jobs['CT02'] = 575740;
+    total_jobs['CD01'] = 351201;
+    total_jobs['CD02'] = 687096;
+    total_jobs['CD03'] = 910699;
+    total_jobs['CD04'] = 1079334;
+    total_jobs['CS01'] = 1936191;
+    total_jobs['CS02'] = 1963337;
 
     var map = L.map('map', {center:[41.8910,-87.6839], zoom: 11});
 
@@ -76,7 +76,7 @@ $(window).resize(function () {
             low = v;
             high = cached_jenks[cache_index][i+1];
             labels.push('<i style="background:' + get_color(low) + '"></i>' +
-                low.toFixed(3) + '%' + (high ? '&ndash;' + high.toFixed(3) + '%': '+'));
+                low.toFixed(2) + '%' + (high ? '&ndash;' + high.toFixed(2) + '%': '+'));
         });
         div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
         return div;
@@ -355,7 +355,7 @@ $(window).resize(function () {
                 style: acc_style,
                 filter: acc_filter,
                 onEachFeature: function(feature, layer) {
-                    var content = 'Accessibility: ' + 100*feature.properties[category] + '% of ' + total_jobs[category] + ' jobs';
+                    var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '% of ' + total_jobs[category] + ' jobs';
                     layer.bindLabel(content);
                 }
             });
@@ -401,7 +401,7 @@ $(window).resize(function () {
                     style: acc_style,
                     filter: acc_filter,
                     onEachFeature: function(feature, layer) {
-                        var content = 'Accessibility: ' + 100*feature.properties[category] + '% of ' + total_jobs[category] + ' jobs';
+                        var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '% of ' + total_jobs[category] + ' jobs';
                         layer.bindLabel(content);
                     }
                 });
@@ -466,9 +466,9 @@ $(window).resize(function () {
     function acc_style(feature) {
         return {
             fillColor: get_color(100*feature.properties[category]),
-            weight: 0,
-            opacity: 1,
-            color: 'white',
+            weight: 1,
+            opacity: 0.7,
+            color: get_color(100*feature.properties[category]),
             fillOpacity: 0.7
         }
     }
