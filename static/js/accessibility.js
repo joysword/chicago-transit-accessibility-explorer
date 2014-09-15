@@ -14,6 +14,10 @@ $(window).resize(function () {
     var category;
     var filename;
     var cache_index;
+    var cta_layer = new L.FeatureGroup();
+    var metra_layer = new L.FeatureGroup();
+    var highway_layer = new L.FeatureGroup();
+    var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow"];
 
     var total_jobs = {};
     total_jobs['C000'] = 3899528;
@@ -65,6 +69,9 @@ $(window).resize(function () {
     }).addTo(map);
 
     L.control.scale().addTo(map);
+
+    load_lines();
+    show_lines();
 
     var legend = L.control({position: 'bottomright'});
     legend.onAdd = function(map) {
@@ -233,6 +240,33 @@ $(window).resize(function () {
                 $('#form-ethnicity').attr('class', 'no-disp');
                 $('#form-education').attr('class', 'no-disp');
                 $('#form-gender').attr('class', 'no-disp');
+        }
+    });
+
+    $('#checkbox-cta').change(function(){
+        if ($('#checkbox-cta').is(':checked')) {
+            map.addLayer(cta_layer);
+        }
+        else {
+            map.removeLayer(cta_layer);
+        }
+    });
+    $('#checkbox-metra').change(function(){
+        if ($('#checkbox-metra').is(':checked')) {
+            map.addLayer(metra_layer);
+        }
+        else {
+            map.removeLayer(metra_layer);
+        }
+    });
+    $('#checkbox-highway').change(function(){
+        if ($('#checkbox-highway').is(':
+
+            Tchecked')) {
+            map.addLayer(highway_layer);
+        }
+        else {
+            map.removeLayer(highway_layer);
         }
     });
 
@@ -478,6 +512,79 @@ $(window).resize(function () {
             feature.properties.GEOID10 == '170319900000' ? false :
             true;
         return show;
+    }
+
+    function load_lines() {
+        for (var i in cta_line_names) {
+            load_line(cta_line_names[i]);
+        }
+        $.getJSON($SCRIPT_ROOT + "static/json/metra.geojson", function(data) {
+            cta_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: function(feature) {
+                        return {
+                            weight: 3,
+                            opacity: 0.6,
+                            color: '#679aaf'
+                        }
+                    }
+                })
+            );
+        });
+    }
+
+    function load_line(name) {
+        $.getJSON($SCRIPT_ROOT + "static/json/"+name+".geojson", function(data) {
+            cta_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: function(feature) {
+                        var final_style = {
+                            weight: 3,
+                            opacity: 0.6
+                        }
+                        switch (name) {
+                            case 'blue':
+                                final_style.color = '#00a1de';
+                                break;
+                            case 'brown':
+                                final_style.color = '#62361b';
+                                break;
+                            case 'green':
+                                final_style.color = '#009b3a';
+                                break;
+                            case 'orange':
+                                final_style.color = '#f9461c';
+                                break;
+                            case 'pink':
+                                final_style.color = '#e27ea6';
+                                break;
+                            case 'purple':
+                                final_style.color = '#522398';
+                                break;
+                            case 'red':
+                                final_style.color = '#c60c30';
+                                break;
+                            case 'yellow':
+                                final_style.color = '#f9e300';
+                                break;
+                        }
+                        return final_style;
+                    }
+                })
+            );
+        });
+    }
+
+    function show_lines() {
+        if ($('#checkbox-cta').is(":checked")) {
+            map.addLayer(cta_layer);
+        }
+        if ($('#checkbox-metra').checked) {
+            map.addLayer(metra_layer);
+        }
+        if ($('#checkbox-highway').checked) {
+            map.addLayer(highway_layer);
+        }
     }
 
 })()
