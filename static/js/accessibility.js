@@ -62,7 +62,7 @@ $(window).resize(function () {
     total_jobs['CS01'] = 1936191;
     total_jobs['CS02'] = 1963337;
 
-    var map = L.map('map', {center:[41.8910,-87.6839], zoom: 11});
+    var map = L.map('map', {center:[41.8910,-87.8839], zoom: 11});
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
@@ -260,9 +260,7 @@ $(window).resize(function () {
         }
     });
     $('#checkbox-highway').change(function(){
-        if ($('#checkbox-highway').is(':
-
-            Tchecked')) {
+        if ($('#checkbox-highway').is(':checked')) {
             map.addLayer(highway_layer);
         }
         else {
@@ -398,7 +396,7 @@ $(window).resize(function () {
             // block 3
             try {
                 legend.removeFrom(map);
-            } catch(e) {};
+            } catch(e) {}
             acc_layer.clearLayers();
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
@@ -508,10 +506,9 @@ $(window).resize(function () {
     }
 
     function acc_filter(feature, layer) {
-        var show =  feature.properties.GEOID10 == '170979900000' ? false :
+        return feature.properties.GEOID10 == '170979900000' ? false :
             feature.properties.GEOID10 == '170319900000' ? false :
             true;
-        return show;
     }
 
     function load_lines() {
@@ -587,4 +584,4 @@ $(window).resize(function () {
         }
     }
 
-})()
+})();
