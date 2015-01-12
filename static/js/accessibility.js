@@ -353,7 +353,7 @@ $(window).resize(function () {
         // if the layer is cached
         if (cache_index in cached_layers) {
             console.log('layer cached');
-            
+
             // block 3
             try {
                 legend.removeFrom(map);
@@ -362,7 +362,7 @@ $(window).resize(function () {
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
-            
+
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             legend.addTo(map);
             //map.fitBounds(acc_layer.getBounds());
@@ -401,7 +401,7 @@ $(window).resize(function () {
             if (typeof acc_layer != 'undefined') {
                 map.removeLayer(acc_layer);
             }
-            
+
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             legend.addTo(map);
             //map.fitBounds(acc_layer.getBounds());
@@ -449,7 +449,7 @@ $(window).resize(function () {
                 if (typeof acc_layer != 'undefined') {
                     map.removeLayer(acc_layer);
                 }
-                
+
                 acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
                 legend.addTo(map);
                 //map.fitBounds(acc_layer.getBounds());
@@ -483,7 +483,7 @@ $(window).resize(function () {
     ]
 
     function get_color(d) {
-        var color = 
+        var color =
             d > cached_jenks[cache_index][6] ? map_colors[7] :
             d > cached_jenks[cache_index][5] ? map_colors[6] :
             d > cached_jenks[cache_index][4] ? map_colors[5] :
