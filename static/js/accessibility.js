@@ -516,7 +516,7 @@ $(window).resize(function () {
             load_line(cta_line_names[i]);
         }
         $.getJSON($SCRIPT_ROOT + "static/json/metra.geojson", function(data) {
-            cta_layer.addLayer(
+            metra_layer.addLayer(
                 L.geoJson(data.features, {
                     style: function(feature) {
                         return {
@@ -573,7 +573,7 @@ $(window).resize(function () {
     }
 
     function show_lines() {
-        if ($('#checkbox-cta').is(":checked")) {
+        if ($('#checkbox-cta').checked) {
             map.addLayer(cta_layer);
         }
         if ($('#checkbox-metra').checked) {
