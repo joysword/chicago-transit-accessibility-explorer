@@ -153,7 +153,7 @@ $(window).resize(function () {
         drawnItems.clearLayers();
     }
 
-    // which type? auto or transit
+    // which type? auto, transit or weighted
     $('#select-type').change(function(){
         switch (this.value) {
             case "auto":
@@ -161,6 +161,9 @@ $(window).resize(function () {
                 break;
             case "transit":
                 $('#form-time').removeClass('no-disp');
+                break;
+            case "weighted":
+                $('#form-time').addClass('no-disp');
                 break;
         }
     });
@@ -281,12 +284,16 @@ $(window).resize(function () {
         var ethnicity =  $('#select-ethnicity').val();
         var education =  $('#select-education').val();
         var gender =  $('#select-gender').val();
+
+        // check whether departure time is specified for transit
         if (type == "transit") {
             if (time == null) {
                 $('#select-time').focus();
                 return
             }
         }
+
+        // check whether a class is specified for each category
         switch (filter) {
             case 'fi_age':
                 if (age == null) {
