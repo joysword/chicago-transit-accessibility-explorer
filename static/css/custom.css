@@ -88,9 +88,11 @@ body {
 .nowrap { white-space:nowrap; }
 
 /* MAP styles */
+/* SHI YIN
 #map {
     min-height: 500px;
 }
+*/
 .leaflet-top.leaflet-left{
     margin-left: 20px;
 }
@@ -226,4 +228,18 @@ body {
 
 .no-disp {
     display: none;
+}
+
+#menu {
+  position: absolute;
+  z-index: 10000;
+  left: 5px;
+  top: 55px;
+}
+.navbar {
+  margin-bottom: 0px;
+}
+body {
+  padding-bottom: 0px;
+  font-size: 17px;
 }

@@ -1,6 +1,6 @@
 $(window).resize(function () {
     var h = $(window).height(),
-      offsetTop = 105; // Calculate the top offset
+      offsetTop = 50; // Calculate the top offset
 
     $('#map').css('height', (h - offsetTop));
 }).resize();
@@ -11,6 +11,7 @@ $(window).resize(function () {
     var cached_jenks = {};
     var acc_layer = new L.FeatureGroup();
     var jenks_cutoffs;
+    var landuse;
     var category;
     var filename;
     var cache_index;
@@ -62,13 +63,26 @@ $(window).resize(function () {
     total_jobs['CS01'] = 1936191;
     total_jobs['CS02'] = 1963337;
 
-    var map = L.map('map', {center:[41.8910,-87.8839], zoom: 11});
+    var total_landuse = {};
+    total_landuse['park_area'] = 11.983198780000007;
+    total_landuse['library'] = 78;
+    total_landuse['fire_sta'] = 92;
+    total_landuse['school'] = 988;
+    total_landuse['hospital'] = 44;
+    total_landuse['pri_sch'] = 355;
+    total_landuse['pub_sch'] = 633;
+    total_landuse['grocery'] = 506;
+    total_landuse['park_count'] = 580;
+
+    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, zoomControl: false, attributionControl: false});
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
 
-    L.control.scale().addTo(map);
+    L.control.scale({position: 'bottomright'}).addTo(map);
+
+    L.control.zoom({position: 'topright'}).addTo(map);
 
     load_lines();
     show_lines();
@@ -122,7 +136,7 @@ $(window).resize(function () {
         }
     });
 
-    map.addControl(drawControl);
+    // map.addControl(drawControl);
     map.on('draw:created', draw_create);
     map.on('draw:edited', draw_edit);
     map.on('draw:deleted', draw_delete);
@@ -153,17 +167,67 @@ $(window).resize(function () {
         drawnItems.clearLayers();
     }
 
+    var cur_acc_type;
+    var cur_travel_type;
+
+    // which accessibility? job, or other land uses?
+    $('#select-acc').change(function(){
+        cur_acc_type = this.value;
+        switch (this.value) {
+            case "job":
+                // show filter and categories
+                $('#form-filter').removeClass('no-disp');
+                $('#form-category').removeClass('no-disp');
+                // show corresponding type and threshold
+                $('#form-type').removeClass('no-disp');
+                $('#form-type-less').addClass('no-disp');
+                $('#form-threshold').removeClass('no-disp');
+                $('#form-threshold-less').addClass('no-disp');
+                // show corresponding time
+                if ($('#select-type').val() == "transit") {
+                    $('#form-time').removeClass('no-disp');
+                    $('#form-time-less').addClass('no-disp');
+                }
+                break;
+            default:
+                // hide filter and categories
+                $('#form-filter').addClass('no-disp');
+                $('#form-category').addClass('no-disp');
+                // show corresponding type and threshold
+                $('#form-type').addClass('no-disp');
+                $('#form-type-less').removeClass('no-disp');
+                $('#form-threshold').addClass('no-disp');
+                $('#form-threshold-less').removeClass('no-disp');
+                // show corresponding time
+                if ($('#select-type').val() == "transit") {
+                    $('#form-time').addClass('no-disp');
+                    $('#form-time-less').removeClass('no-disp');
+                }
+                break;
+        }
+    })
+
     // which type? auto, transit or weighted
+    // for job
     $('#select-type').change(function(){
         switch (this.value) {
-            case "auto":
-                $('#form-time').addClass('no-disp');
-                break;
             case "transit":
                 $('#form-time').removeClass('no-disp');
                 break;
-            case "weighted":
+            default:
                 $('#form-time').addClass('no-disp');
+                break;
+        }
+    });
+
+    // for other land use
+    $('#select-type-less').change(function(){
+        switch (this.value) {
+            case "transit":
+                $('#form-time-less').removeClass('no-disp');
+                break;
+            default:
+                $('#form-time-less').addClass('no-disp');
                 break;
         }
     });
@@ -273,9 +337,13 @@ $(window).resize(function () {
 
     // called when the button is clicked
     function show_map(e) {
+        landuse = $('#select-acc').val();
         var type =  $('#select-type').val();
+        var type_less =  $('#select-type-less').val();
         var time =  $('#select-time').val();
+        var time_less =  $('#select-time-less').val();
         var threshold =  $('#select-threshold').val();
+        var threshold_less =  $('#select-threshold-less').val();
         var filter =  $('#select-filter').val();
         var age =  $('#select-age').val();
         var earning =  $('#select-earning').val();
@@ -284,14 +352,6 @@ $(window).resize(function () {
         var ethnicity =  $('#select-ethnicity').val();
         var education =  $('#select-education').val();
         var gender =  $('#select-gender').val();
-
-        // check whether departure time is specified for transit
-        if (type == "transit") {
-            if (time == null) {
-                $('#select-time').focus();
-                return
-            }
-        }
 
         // check whether a class is specified for each category
         switch (filter) {
@@ -348,14 +408,28 @@ $(window).resize(function () {
                 category = "C000"
         }
 
-        filename = "static/json/acc_" + type + "_";
-
-        if (type == "transit") {
-            filename += time + "_";
+        filename = "static/json/acc_";
+        if (landuse != "job") {
+            filename += "landuse_" + type_less + "_";
+            if (type_less == "transit") {
+                filename += time_less + "_";
+            }
+            filename += threshold_less + '.geojson';
         }
-        filename += threshold + '.geojson';
+        else {
+            filename += type + "_";
+            if (type == "transit") {
+                filename += time + "_";
+            }
+            filename += threshold + '.geojson';
+        }
 
-        cache_index = category + '_' + filename;
+        if (landuse != "job") {
+            cache_index = landuse + '_' + filename;
+        }
+        else {
+            cache_index = category + '_' + filename;
+        }
 
         // if the layer is cached
         if (cache_index in cached_layers) {
@@ -383,21 +457,38 @@ $(window).resize(function () {
             // block 2
             var val = [];
             $.each(cached_json[filename].features, function(i, v) {
-                val.push(100*v.properties[category]);
+                if (landuse=="job") {
+                    val.push(100*v.properties[category]);
+                }
+                else {
+                    val.push(100*v.properties[landuse]);
+                }
             });
             jenks_cutoffs = jenks(val, 7);
             jenks_cutoffs[0] = 0;
             jenks_cutoffs.pop();
             cached_jenks[cache_index] = jenks_cutoffs;
 
-            cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
-                style: acc_style,
-                filter: acc_filter,
-                onEachFeature: function(feature, layer) {
-                    var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '% of ' + total_jobs[category] + ' jobs';
-                    layer.bindLabel(content);
-                }
-            });
+            if (landuse=="job") {
+                cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
+                    style: acc_style,
+                    filter: acc_filter,
+                    onEachFeature: function(feature, layer) {
+                        var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                        layer.bindLabel(content);
+                    }
+                });
+            }
+            else {
+                 cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
+                    style: landuse_style,
+                    filter: acc_filter,
+                    onEachFeature: function(feature, layer) {
+                        var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
+                        layer.bindLabel(content);
+                    }
+                });
+            }
             // end block 2
 
             // block 3
@@ -429,21 +520,38 @@ $(window).resize(function () {
                 // block 2
                 var val = [];
                 $.each(cached_json[filename].features, function(i, v) {
-                    val.push(100*v.properties[category]);
+                    if (landuse=="job") {
+                        val.push(100*v.properties[category]);
+                    }
+                    else {
+                        val.push(100*v.properties[landuse]);
+                    }
                 });
                 jenks_cutoffs = jenks(val, 7);
                 jenks_cutoffs[0] = 0;
                 jenks_cutoffs.pop();
                 cached_jenks[cache_index] = jenks_cutoffs;
 
-                cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
-                    style: acc_style,
-                    filter: acc_filter,
-                    onEachFeature: function(feature, layer) {
-                        var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '% of ' + total_jobs[category] + ' jobs';
-                        layer.bindLabel(content);
-                    }
-                });
+                if (landuse=="job") {
+                    cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
+                        style: acc_style,
+                        filter: acc_filter,
+                        onEachFeature: function(feature, layer) {
+                            var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '<br>Total jobs: ' + total_jobs[category];
+                            layer.bindLabel(content);
+                        }
+                    });
+                }
+                else {
+                     cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
+                        style: landuse_style,
+                        filter: acc_filter,
+                        onEachFeature: function(feature, layer) {
+                            var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '<br>Total number: ' + total_landuse[landuse];
+                            layer.bindLabel(content);
+                        }
+                    });
+                }
                 // end block 2
 
                 $('#map').spin(false);
@@ -499,7 +607,7 @@ $(window).resize(function () {
             d > cached_jenks[cache_index][1] ? map_colors[2] :
             d > cached_jenks[cache_index][0] ? map_colors[1] :
                      map_colors[0];
-        return color
+        return color;
     }
 
     function acc_style(feature) {
@@ -508,6 +616,16 @@ $(window).resize(function () {
             weight: 1,
             opacity: 0.7,
             color: get_color(100*feature.properties[category]),
+            fillOpacity: 0.7
+        }
+    }
+
+    function landuse_style(feature) {
+        return {
+            fillColor: get_color(100*feature.properties[landuse]),
+            weight: 1,
+            opacity: 0.7,
+            color: get_color(100*feature.properties[landuse]),
             fillOpacity: 0.7
         }
     }
