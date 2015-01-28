@@ -6,7 +6,7 @@
         <meta name="description" content="">
         <meta name="author" content="Shi Yin">
 
-        <title>Chicago Transportation Accessibility Explorer</title>
+        <title>Metropolitan Chicago Accessibility Explorer</title>
 
 		<!-- Bootstrap core CSS -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
@@ -37,7 +37,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">Chicago Transportation Accessibility Explorer</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Metropolitan Chicago Accessibility Explorer</a>
             </div>
             <div class="navbar-collapse collapse pull-right">
                 <ul class="nav navbar-nav">
@@ -61,16 +61,16 @@
                             <div id="form-acc">
                                 <label for="select-acc">Accessibility Type: </label>
                                 <select id="select-acc" class="form-control">
-                                    <option value="job" selected>Job</option>
-                                    <option value="park_area">Park (area)</option>
-                                    <option value="park_count">Park (count)</option>
-                                    <option value="library">Library</option>
-                                    <option value="fire_sta">Fire Station</option>
-                                    <option value="school">School (all)</option>
-                                    <option value="pri_sch">School (private)</option>
-                                    <option value="pub_sch">School (public)</option>
-                                    <option value="hospital">Hospital</option>
-                                    <option value="grocery">Grocery Store</option>
+                                    <option value="job" selected>Jobs</option>
+                                    <option value="park_area">Parks (area)</option>
+                                    <option value="park_count">Parks (count)</option>
+                                    <option value="library">Libraries</option>
+                                    <option value="fire_sta">Fire Stations</option>
+                                    <option value="school">Schools (all)</option>
+                                    <option value="pri_sch">Schools (private)</option>
+                                    <option value="pub_sch">Schools (public)</option>
+                                    <option value="hospital">Hospitals</option>
+                                    <option value="grocery">Grocery Stores</option>
                                 </select>
                             </div><!--/#form-acc-->
                         </div><!--/.form-group-->
@@ -289,12 +289,12 @@
                                         show Metra lines
                                     </label>
                                 </div>
-                                <div class="checkbox">
+                                <!-- <div class="checkbox">
                                     <label>
                                         <input type="checkbox" value="" id="checkbox-highway">
                                         show major highways
                                     </label>
-                                </div>
+                                </div> -->
                             </div><!--/#form-lines-->
                         </div><!--/.form-group-->
                     </form>
@@ -314,6 +314,9 @@
         <script src='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+
+        <!-- Leaflet Omnivore JavaScript -->
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
 
         <!-- moment.js, spin.js, etc -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>

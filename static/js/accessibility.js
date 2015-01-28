@@ -484,7 +484,12 @@ $(window).resize(function () {
                     style: landuse_style,
                     filter: acc_filter,
                     onEachFeature: function(feature, layer) {
-                        var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
+                        if (landuse == "park_area") {
+                            var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total area (sq. miles): ' + (total_landuse[landuse]).toFixed(1);
+                        }
+                        else {
+                            var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
+                        }
                         layer.bindLabel(content);
                     }
                 });
@@ -547,7 +552,12 @@ $(window).resize(function () {
                         style: landuse_style,
                         filter: acc_filter,
                         onEachFeature: function(feature, layer) {
-                            var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '<br>Total number: ' + total_landuse[landuse];
+                            if (landuse == "park_area") {
+                                var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + (total_landuse[landuse]).toFixed(2);
+                            }
+                            else {
+                                var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
+                            }
                             layer.bindLabel(content);
                         }
                     });
@@ -611,21 +621,23 @@ $(window).resize(function () {
     }
 
     function acc_style(feature) {
+        var color = get_color(100*feature.properties[category]);
         return {
-            fillColor: get_color(100*feature.properties[category]),
+            fillColor: color,
             weight: 1,
+            color: '#fff',
             opacity: 0.7,
-            color: get_color(100*feature.properties[category]),
             fillOpacity: 0.7
         }
     }
 
     function landuse_style(feature) {
+        var color = get_color(100*feature.properties[landuse]);
         return {
-            fillColor: get_color(100*feature.properties[landuse]),
+            fillColor: color,
             weight: 1,
+            color: '#fff',
             opacity: 0.7,
-            color: get_color(100*feature.properties[landuse]),
             fillOpacity: 0.7
         }
     }
