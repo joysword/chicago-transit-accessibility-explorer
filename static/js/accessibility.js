@@ -142,6 +142,8 @@ $(window).resize(function () {
     map.on('draw:deleted', draw_delete);
     map.on('draw:drawstart', draw_delete);
 
+    map.on('zoomend', change_weight);
+
     function draw_create(e) {
         drawnItems.clearLayers();
         drawnItems.addLayer(e.layer);
@@ -165,6 +167,18 @@ $(window).resize(function () {
     function draw_delete(e){
         acc_layer.clearLayers();
         drawnItems.clearLayers();
+    }
+
+    function change_weight() {
+        console.log('in change_weight()');
+        console.log(cached_layers[cache_index]);
+        if (typeof cached_layers[cache_index] != 'undefined') {
+            console.log('has layer')
+            cached_layers[cache_index].setStyle(function(feature) {
+                return {weight: get_weight()}
+            })
+            console.log('changed style')
+        }
     }
 
     var cur_acc_type;
@@ -620,13 +634,18 @@ $(window).resize(function () {
         return color;
     }
 
+    function get_weight() {
+        var zoom = map.getZoom();
+        return zoom < 11 ? 0 : 1;
+
+    }
+
     function acc_style(feature) {
         var color = get_color(100*feature.properties[category]);
         return {
             fillColor: color,
-            weight: 1,
+            weight: get_weight(),
             color: '#fff',
-            opacity: 0.7,
             fillOpacity: 0.7
         }
     }
@@ -635,9 +654,8 @@ $(window).resize(function () {
         var color = get_color(100*feature.properties[landuse]);
         return {
             fillColor: color,
-            weight: 1,
+            weight: get_weight(),
             color: '#fff',
-            opacity: 0.7,
             fillOpacity: 0.7
         }
     }
