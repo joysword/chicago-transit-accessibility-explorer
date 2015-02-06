@@ -74,10 +74,10 @@ $(window).resize(function () {
     total_landuse['grocery'] = 506;
     total_landuse['park_count'] = 580;
 
-    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, zoomControl: false, attributionControl: false});
+    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, zoomControl: false});
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
-        attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> <a class='mapbox-improve-map' href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a>"
     }).addTo(map);
 
     L.control.scale({position: 'bottomright'}).addTo(map);
