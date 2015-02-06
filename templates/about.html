@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="">
+        <meta name="author" content="Shi Yin">
+
+        <title>Metropolitan Chicago Accessibility Explorer</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
+        <!--<link href="//plenario.datamade.us/static/css/bootstrap.min.css" rel="stylesheet" >-->
+        <!--<link href="//plenario.datamade.us/static/css/font-awesome.css" rel="stylesheet" >-->
+
+        <!-- Mapbox core CSS -->
+        <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
+        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
+        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+
+        <!-- custom css -->
+        <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+
+        <script type='text/javascript'>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+    </head>
+
+    <body style="height: 100%">
+        <!-- Navigation bar -->
+        <div class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Metropolitan Chicago Accessibility Explorer</a>
+            </div>
+            <div class="navbar-collapse collapse pull-right">
+                <ul class="nav navbar-nav">
+                    <li class=""><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="active"><a href="{{ url_for('about') }}">About</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+        <!-- end of Navigation bar -->
+
+        <!-- main -->
+            <div class="about">
+                <p>The Metropolitan Chicago Accessibility Explorer is a project that was funded by IDOT's METSI program and the National Center for Transit Research NCTR-USF through UIC's Urban Transportation Center. The project was undertaken by the Travel Behavior and Urban Systems Research Group at the Department of Urban Planning and Policy at UIC. </p>
+
+                <p>Details of the Accessibility Explorer are available here: [to be updated].</p>
+
+                <p>Questions? Please contact Dr. Nebiyou Tilahun at ntilahun at uic.edu.</p>
+
+                [This page is under construction.]
+            </div>
+    </body>
+</html>

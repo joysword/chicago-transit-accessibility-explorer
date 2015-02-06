@@ -243,3 +243,8 @@ body {
   padding-bottom: 0px;
   font-size: 17px;
 }
+
+.about {
+  width: 80%;
+  margin: 20px auto;
+}
