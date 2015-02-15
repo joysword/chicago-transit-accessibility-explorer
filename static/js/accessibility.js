@@ -74,10 +74,10 @@ $(window).resize(function () {
     total_landuse['grocery'] = 506;
     total_landuse['park_count'] = 580;
 
-    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, zoomControl: false});
+    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, minZoom: 11, zoomControl: false});
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
-        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> <a class='mapbox-improve-map' href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a>"
+        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a>"
     }).addTo(map);
 
     L.control.scale({position: 'bottomright'}).addTo(map);
@@ -87,7 +87,7 @@ $(window).resize(function () {
     load_lines();
     show_lines();
 
-    var legend = L.control({position: 'bottomright'});
+    var legend = L.control({position: 'topright'});
     legend.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'legend');
         var labels = [];
@@ -202,6 +202,10 @@ $(window).resize(function () {
                     $('#form-time').removeClass('no-disp');
                     $('#form-time-less').addClass('no-disp');
                 }
+                else {
+                    $('#form-time').addClass('no-disp');
+                    $('#form-time-less').addClass('no-disp');
+                }
                 break;
             default:
                 // hide filter and categories
@@ -213,9 +217,13 @@ $(window).resize(function () {
                 $('#form-threshold').addClass('no-disp');
                 $('#form-threshold-less').removeClass('no-disp');
                 // show corresponding time
-                if ($('#select-type').val() == "transit") {
+                if ($('#select-type-less').val() == "transit") {
                     $('#form-time').addClass('no-disp');
                     $('#form-time-less').removeClass('no-disp');
+                }
+                else {
+                    $('#form-time').addClass('no-disp');
+                    $('#form-time-less').addClass('no-disp');
                 }
                 break;
         }
@@ -428,14 +436,14 @@ $(window).resize(function () {
             if (type_less == "transit") {
                 filename += time_less + "_";
             }
-            filename += threshold_less + '.geojson';
+            filename += threshold_less + '_.json';
         }
         else {
             filename += type + "_";
             if (type == "transit") {
                 filename += time + "_";
             }
-            filename += threshold + '.geojson';
+            filename += threshold + '_.json';
         }
 
         if (landuse != "job") {
@@ -448,6 +456,8 @@ $(window).resize(function () {
         // if the layer is cached
         if (cache_index in cached_layers) {
             console.log('layer cached');
+            time_2_3 = Date.now();
+            console.log(Date(time_2_3));
 
             // block 3
             try {
@@ -461,12 +471,19 @@ $(window).resize(function () {
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             legend.addTo(map);
             //map.fitBounds(acc_layer.getBounds());
+
+            console.log('adding layer done');
+            time_done = Date.now();
+            console.log(Date(time_done));
+            console.log(time_done - time_2_3)
             // end block 3
 
         }
         // if the geojson file is cached
         else if (filename in cached_json) {
             console.log('layer not cached, but json cached');
+            time_1_2 = Date.now();
+            console.log(Date(time_1_2));
 
             // block 2
             var val = [];
@@ -508,6 +525,11 @@ $(window).resize(function () {
                     }
                 });
             }
+
+            console.log('calculation done');
+            time_2_3 = Date.now();
+            console.log(Date(time_2_3));
+            console.log(time_2_3 - time_1_2);
             // end block 2
 
             // block 3
@@ -522,11 +544,18 @@ $(window).resize(function () {
             acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
             legend.addTo(map);
             //map.fitBounds(acc_layer.getBounds());
+
+            console.log('adding layer done');
+            time_done = Date.now();
+            console.log(Date(time_done));
+            console.log(time_done - time_2_3);
             // end block 3
 
         }
         else {
             console.log('nothing cached');
+            time_start = Date.now();
+            console.log(Date(time_start));
 
             $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
@@ -534,6 +563,11 @@ $(window).resize(function () {
 
                 // block 1
                 cached_json[filename] = data;
+
+                console.log('got data');
+                time_1_2 = Date.now();
+                console.log(Date(time_1_2));
+                console.log(time_1_2 - time_start);
                 // end block 1
 
                 // block 2
@@ -556,7 +590,7 @@ $(window).resize(function () {
                         style: acc_style,
                         filter: acc_filter,
                         onEachFeature: function(feature, layer) {
-                            var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '<br>Total jobs: ' + total_jobs[category];
+                            var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
                             layer.bindLabel(content);
                         }
                     });
@@ -576,6 +610,11 @@ $(window).resize(function () {
                         }
                     });
                 }
+
+                console.log('calculation done');
+                time_2_3 = Date.now();
+                console.log(Date(time_2_3));
+                console.log(time_2_3 - time_1_2);
                 // end block 2
 
                 $('#map').spin(false);
@@ -592,6 +631,11 @@ $(window).resize(function () {
                 acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
                 legend.addTo(map);
                 //map.fitBounds(acc_layer.getBounds());
+
+                console.log('adding layer done');
+                time_done = Date.now();
+                console.log(Date(time_done));
+                console.log(time_done - time_2_3);
                 // end block 3
 
             });
@@ -670,7 +714,7 @@ $(window).resize(function () {
         for (var i in cta_line_names) {
             load_line(cta_line_names[i]);
         }
-        $.getJSON($SCRIPT_ROOT + "static/json/metra.geojson", function(data) {
+        $.getJSON($SCRIPT_ROOT + "static/json/metra.json", function(data) {
             metra_layer.addLayer(
                 L.geoJson(data.features, {
                     style: function(feature) {
@@ -686,7 +730,7 @@ $(window).resize(function () {
     }
 
     function load_line(name) {
-        $.getJSON($SCRIPT_ROOT + "static/json/"+name+".geojson", function(data) {
+        $.getJSON($SCRIPT_ROOT + "static/json/"+name+".json", function(data) {
             cta_layer.addLayer(
                 L.geoJson(data.features, {
                     style: function(feature) {
