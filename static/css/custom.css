@@ -245,6 +245,19 @@ body {
 }
 
 .about {
-  width: 80%;
-  margin: 20px auto;
+  width: 45em;
+  margin: 60px auto;
+  padding: 30px;
+  border: 1px;
+  border-style: solid;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+  border-color: #ddd;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+}
+
+#sidebar {
+  width: 16em;
 }
