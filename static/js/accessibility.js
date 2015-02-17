@@ -14,7 +14,7 @@ $(window).resize(function () {
     var landuse;
     var category;
     var filename;
-    //var cache_index;
+    var cache_index;
     var cta_layer = new L.FeatureGroup();
     var metra_layer = new L.FeatureGroup();
     var highway_layer = new L.FeatureGroup();
@@ -598,19 +598,25 @@ $(window).resize(function () {
                 // end block 1
 
                 // block 2
-                val = [];
-                $.each(my_data.features, function(i, v) {
-                    if (landuse=="job") {
-                        val.push(100*v.properties[category]);
-                    }
-                    else {
-                        val.push(100*v.properties[landuse]);
-                    }
-                });
-                jenks_cutoffs = jenks(val, 7);
-                jenks_cutoffs[0] = 0;
-                jenks_cutoffs.pop();
-                cached_jenks[cache_index] = jenks_cutoffs;
+                if (cached_jenks[cache_index] == undefined) {
+                    console.log('jenks not cached');
+                    val = [];
+                    $.each(my_data.features, function(i, v) {
+                        if (landuse=="job") {
+                            val.push(100*v.properties[category]);
+                        }
+                        else {
+                            val.push(100*v.properties[landuse]);
+                        }
+                    });
+                    jenks_cutoffs = jenks(val, 7);
+                    jenks_cutoffs[0] = 0;
+                    jenks_cutoffs.pop();
+                    cached_jenks[cache_index] = jenks_cutoffs;
+                }
+                else {
+                    console.log('jenks cached');
+                }
 
                 var my_geojson;
 
@@ -697,16 +703,42 @@ $(window).resize(function () {
     ]
 
     function get_color(d) {
-        var color =
-            d > cached_jenks[cache_index][6] ? map_colors[7] :
-            d > cached_jenks[cache_index][5] ? map_colors[6] :
-            d > cached_jenks[cache_index][4] ? map_colors[5] :
-            d > cached_jenks[cache_index][3] ? map_colors[4] :
-            d > cached_jenks[cache_index][2] ? map_colors[3] :
-            d > cached_jenks[cache_index][1] ? map_colors[2] :
-            d > cached_jenks[cache_index][0] ? map_colors[1] :
-                     map_colors[0];
-        return color;
+        if (d > cached_jenks[cache_index][3]) {
+            if (d > cached_jenks[cache_index][5]) {
+                if (d > cached_jenks[cache_index][6]) {
+                    return map_colors[7];
+                }
+                else {
+                    return map_colors[6];
+                }
+            }
+            else {
+                if (d > cached_jenks[cache_index][4]) {
+                    return map_colors[5];
+                }
+                else {
+                    return map_colors[4];
+                }
+            }
+        }
+        else {
+            if (d > cached_jenks[cache_index][1]) {
+                if (d > cached_jenks[cache_index][2]) {
+                    return map_colors[3];
+                }
+                else {
+                    return map_colors[2];
+                }
+            }
+            else {
+                if (d > cached_jenks[cache_index][0]) {
+                    return map_colors[1];
+                }
+                else {
+                    return map_colors[0];
+                }
+            }
+        }
     }
 
     function acc_style(feature) {
