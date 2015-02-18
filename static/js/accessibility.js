@@ -17,7 +17,6 @@ $(window).resize(function () {
     var cache_index;
     var cta_layer = new L.FeatureGroup();
     var metra_layer = new L.FeatureGroup();
-    var highway_layer = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow"];
 
     var val = [];
@@ -370,14 +369,6 @@ $(window).resize(function () {
             map.removeLayer(metra_layer);
         }
     });
-    $('#checkbox-highway').change(function(){
-        if ($('#checkbox-highway').is(':checked')) {
-            map.addLayer(highway_layer);
-        }
-        else {
-            map.removeLayer(highway_layer);
-        }
-    });
 
     // called when the button is clicked
     function show_map(e) {
@@ -667,6 +658,14 @@ $(window).resize(function () {
 
                 acc_layer.addLayer(my_layer).addTo(map);
                 legend.addTo(map);
+                // bing up CTA/Metra layers to top
+                if ($('#checkbox-cta').is(':checked')) {
+                    cta_layer.bringToFront();
+                }
+                if ($('#checkbox-metra').is(':checked')) {
+                    metra_layer.bringToFront();
+                }
+
                 //map.fitBounds(acc_layer.getBounds());
 
                 console.log('adding layer done');
@@ -853,14 +852,11 @@ $(window).resize(function () {
     }
 
     function show_lines() {
-        if ($('#checkbox-cta').checked) {
+        if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
         }
-        if ($('#checkbox-metra').checked) {
+        if ($('#checkbox-metra').is(':checked')) {
             map.addLayer(metra_layer);
-        }
-        if ($('#checkbox-highway').checked) {
-            map.addLayer(highway_layer);
         }
     }
 
