@@ -171,6 +171,9 @@ $(window).resize(function () {
     }
 
     function style_change() {
+        if (typeof my_layer == 'undefined') {
+            return;
+        }
         console.log('zoom:', map.getZoom());
         if (map.getZoom() <= 10) {
             console.log('<=10');
