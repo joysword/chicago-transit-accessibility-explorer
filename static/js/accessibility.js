@@ -85,6 +85,14 @@ $(window).resize(function () {
 
     L.control.zoom({position: 'topright'}).addTo(map);
 
+    map.on('click', function(e) {
+        var which_bg = leafletPip.pointInLayer(e.latlng, my_layer, true);
+        console.log('which_bg:');
+        console.log(which_bg);
+        if (which_bg.length == 0) { return; }
+        select_bg(which_bg[0].feature.properties.num);
+    })
+
     load_lines();
     show_lines();
 
@@ -614,6 +622,8 @@ $(window).resize(function () {
 
                 var my_geojson;
 
+
+                var which_feature = 0;
                 if (landuse=="job") {
                     // cached_layers[cache_index] = L.geoJson(my_data.features, {
                     my_layer = L.geoJson(my_data.features, {
@@ -622,8 +632,13 @@ $(window).resize(function () {
                         onEachFeature: function(feature, layer) {
                             var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
                             layer.bindLabel(content);
+                            feature.properties.num = which_feature;
+                            layer.on('click', clickHandler);
+                            which_feature++;
                         }
                     });
+                    console.log('layer:');
+                    console.log(my_layer);
                 }
                 else {
                     // cached_layers[cache_index] = L.geoJson(my_data.features, {
@@ -638,6 +653,9 @@ $(window).resize(function () {
                                 var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
                             }
                             layer.bindLabel(content);
+                            feature.properties.num = which_feature;
+                            layer.on('click', clickHandler);
+                            which_feature++;
                         }
                     });
                 }
@@ -682,6 +700,39 @@ $(window).resize(function () {
     }
 
     $('#btn-submit').on('click', show_map);
+
+    function clickHandler(e){
+        console.log('in clickHandler()');
+        select_bg(e.target.feature.properties.num);
+    }
+
+    function select_bg(num){
+
+        console.log('in select_bg()');
+
+        bg = num;
+        //updateHash();
+        $.getJSON($SCRIPT_ROOT + "/static/json/chicago_od_driving_" + num + '.json', function(data){
+            _.each(my_layer._layers, function(bg){
+                var num = bg.feature.properties.num;
+
+                if (_.has(at:a, num))
+                {
+                    bg.setStyle({
+                        fill: true,
+                        fillColor: get_iso_color(data[num]),
+                    });
+                }
+                else
+                {
+                    hex.setStyle({
+                        fillOpacity: 0,
+                        stroke: false
+                    });
+                }
+            });
+        });
+    }
 
     var map_colors1 = [
         '#deebf7',
@@ -743,6 +794,53 @@ $(window).resize(function () {
         }
     }
 
+    function get_iso_color(seconds) {
+        if (seconds < 300) {
+            return '#f46d6c';
+        }
+        else if (seconds < 600)
+        {
+            return '#fda36c';
+
+        }
+        else if (seconds < 900)
+        {
+            return '#fedc6c';
+
+        }
+        else if (seconds < 1200)
+        {
+            return '#d4f470';
+
+        }
+        else if (seconds < 1800)
+        {
+            return '#a7f49a';
+
+        }
+        else if (seconds < 2400)
+        {
+            return '#85ffe0';
+
+        }
+        else if (seconds < 2700)
+        {
+            return '#6fcfff';
+
+        }
+        else if (seconds < 3000)
+        {
+            return '#6d91f3';
+
+        }
+        else if (seconds < 3600)
+        {
+            return '#6b69e8';
+
+        }
+        return '#7c7dbb';
+    }
+
     function acc_style(feature) {
         var color = get_color(100*feature.properties[category]);
         if (map.getZoom()<=10) {
@@ -785,6 +883,10 @@ $(window).resize(function () {
                 fillOpacity: 0.7
             }
         }
+    }
+
+    function iso_style() {
+        var color = get_iso_color(feature.properties[])
     }
 
     function acc_filter(feature, layer) {

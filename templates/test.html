@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="">
+        <meta name="author" content="Shi Yin">
+
+        <title>Metropolitan Chicago Accessibility Explorer</title>
+
+		<!-- Bootstrap core CSS -->
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
+        <!--<link href="//plenario.datamade.us/static/css/bootstrap.min.css" rel="stylesheet" >-->
+        <!--<link href="//plenario.datamade.us/static/css/font-awesome.css" rel="stylesheet" >-->
+
+        <!-- Mapbox core CSS -->
+        <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
+        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
+        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+
+        <!-- custom css -->
+        <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+
+        <script type='text/javascript'>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+    </head>
+
+    <body style="height: 100%">
+        <!-- Navigation bar -->
+        <div class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Metropolitan Chicago Accessibility Explorer</a>
+            </div>
+            <div class="navbar-collapse collapse pull-right">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class=""><a href="{{ url_for('about') }}">About</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+        <!-- end of Navigation bar -->
+
+        <!-- main -->
+
+
+
+        <div id="map"></div>
+        <div id="menu" class="well">
+            <div id="sidebar">
+                <div>
+                    <form role="form">
+                        <div class="form-group">
+                            <div id="form-layer">
+                                <label for="select-layer">Which layer: </label>
+                                <select id="select-layer" class="form-control">
+                                    <option value="metro" selected>Metropolitan</option>
+                                    <option value="chicago">Chicago only</option>
+                                </select>
+                            </div><!--/#form-layer-->
+                        </div><!--/.form-group-->
+                        <div class="form-group">
+                            <div id="form-type">
+                                <label for="select-type">Travel Mode: </label>
+                                <select id="select-type" class="form-control">
+                                    <option value="driving" selected>Driving</option>
+                                    <option value="transit">Transit</option>
+                                    <!--<option value="weighted">Weighted</option>-->
+                                    <option value="walking"> Walking</option>
+                                </select>
+                            </div><!--/#form-type-->
+                        </div><!--/.form-group-->
+                        <div class="form-group">
+                            <div id="form-time" class="no-disp">
+                                <label for="select-time">Departure Time: </label>
+                                <select id="select-time" class="form-control">
+                                    <option value="0">midnight</option>
+                                    <option value="1">1 am</option>
+                                    <option value="2">2 am</option>
+                                    <option value="3">3 am</option>
+                                    <option value="4">4 am</option>
+                                    <option value="5">5 am</option>
+                                    <option value="6">6 am</option>
+                                    <option value="7">7 am</option>
+                                    <option value="8" selected>8 am</option>
+                                    <option value="9">9 am</option>
+                                    <option value="10">10 am</option>
+                                    <option value="11">11 am</option>
+                                    <option value="12">noon</option>
+                                    <option value="13">1 pm</option>
+                                    <option value="14">2 pm</option>
+                                    <option value="15">3 pm</option>
+                                    <option value="16">4 pm</option>
+                                    <option value="17">5 pm</option>
+                                    <option value="18">6 pm</option>
+                                    <option value="19">7 pm</option>
+                                    <option value="20">8 pm</option>
+                                    <option value="21">9 pm</option>
+                                    <option value="22">10 pm</option>
+                                    <option value="23">11 pm</option>
+                                </select>
+                            </div><!--/#form-time-->
+                        </div><!--/.form-group-->
+                        <button id="btn-submit" class="btn btn-primary" type="button"><i class="fa fa-search"></i>  Show Map</button>
+                    </form>
+                </div>
+                <hr>
+                <div>
+                    <form role="form">
+                        <div class="form-group">
+                            <div id="form-lines">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="" id="checkbox-cta">
+                                        show CTA lines
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="" id="checkbox-metra">
+                                        show Metra lines
+                                    </label>
+                                </div>
+                                <!-- <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="" id="checkbox-highway">
+                                        show major highways
+                                    </label>
+                                </div> -->
+                            </div><!--/#form-lines-->
+                        </div><!--/.form-group-->
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <!--<script src="//plenario.datamade.us/static/js/bootstrap.min.js"></script>-->
+
+        <!-- moment.js, spin.js, etc -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
+        <script src="{{ url_for('static', filename='js/jquery.spin.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='js/ejs_production.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='js/jenks.js') }}"></script>
+
+        <!-- underscore.js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+
+        <!-- Mapbox core JavaScript -->
+        <script src='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.js'></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+
+        <!-- Leaflet Omnivore JavaScript -->
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+
+        <!-- Leaflet Point-in-Polygon JavaScript -->
+        <script src="{{ url_for('static', filename='js/leaflet-pip.min.js') }}"></script>
+
+        <!-- D3 TopoJson JavaScript -->
+        <script src="{{ url_for('static', filename='js/topojson.js') }}"></script>
+
+        <!-- custom js -->
+
+        <script src="{{ url_for('static', filename='js/accessibility_test.js') }}"></script>
+
+    </body>
+</html>
