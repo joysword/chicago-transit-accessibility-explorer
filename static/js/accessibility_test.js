@@ -15,7 +15,6 @@ $(window).resize(function () {
     var jenks_cutoffs;
     var layer;
     var category;
-    var filename;
     var cache_index;
     var cta_layer = new L.FeatureGroup();
     var metra_layer = new L.FeatureGroup();
@@ -104,11 +103,13 @@ $(window).resize(function () {
         var type =  $('#select-type').val();
         var time =  $('#select-time').val();
 
-        filename = "static/json/acc_";
-        if (layer != "metro") {
-            filename += "landuse_"
+        var filename = 'static/json/' + layer + '.topojson';
+        if (layer == "metro") {
+            filename == 'static/json/metro.topojson';
         }
-        filename += 'auto_300_.json'; // always use auto_300_.json
+        else {
+            filename = 'static/json/chicago.topojson';
+        }
 
         {
 
@@ -138,9 +139,9 @@ $(window).resize(function () {
                 // end block 1
 
                 // block 2
-                if (layer=="metro") {
+                if (layer == 'metro') {
                     var which_feature = 1;
-                    metro_layer = L.geoJson(data.features, {
+                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
                         style: empty_style,
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
@@ -154,11 +155,12 @@ $(window).resize(function () {
                     });
                     console.log('which_feature:');
                     console.log(which_feature);
+                    console.log(metro_layer);
                 }
                 else {
                     var which_feature = 0;
                     // cached_layers[cache_index] = L.geoJson(my_data.features, {
-                    chicago_layer = L.geoJson(data.features, {
+                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
                         style: empty_style,
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
@@ -172,6 +174,7 @@ $(window).resize(function () {
                     });
                     console.log('which_feature:');
                     console.log(which_feature);
+                    console.log(chicago_layer);
                 }
 
                 console.log('calculation done');
@@ -186,6 +189,7 @@ $(window).resize(function () {
                 }
                 if (layer=='metro') {
                     acc_layer.addLayer(metro_layer).addTo(map);
+                    console.log('metro layer added');
                 }
                 else {
                     acc_layer.addLayer(chicago_layer).addTo(map);

@@ -8,18 +8,21 @@ $(window).resize(function () {
 (function(){
     //var cached_layers = {};
     var cached_json = {};
+    var cache_index;
     var cached_jenks = {};
     var acc_layer = new L.FeatureGroup();
+    var metro_layer = new L.FeatureGroup();
+    var chicago_layer = new L.FeatureGroup();
+    var has_metro_layer = false;
+    var has_chicago_layer = false;
     var jenks_cutoffs;
-    var landuse;
-    var category;
-    var filename;
-    var cache_index;
     var cta_layer = new L.FeatureGroup();
     var metra_layer = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow"];
 
     var val = [];
+
+    var my_layer = null;
 
     var total_jobs = {};
     total_jobs['C000'] = 3899528;
@@ -84,14 +87,6 @@ $(window).resize(function () {
     L.control.scale({position: 'bottomright'}).addTo(map);
 
     L.control.zoom({position: 'topright'}).addTo(map);
-
-    map.on('click', function(e) {
-        var which_bg = leafletPip.pointInLayer(e.latlng, my_layer, true);
-        console.log('which_bg:');
-        console.log(which_bg);
-        if (which_bg.length == 0) { return; }
-        select_bg(which_bg[0].feature.properties.num);
-    })
 
     load_lines();
     show_lines();
@@ -179,16 +174,14 @@ $(window).resize(function () {
     }
 
     function style_change() {
-        if (typeof my_layer == 'undefined') {
+        if (my_layer == undefined) {
             return;
         }
         console.log('zoom:', map.getZoom());
         if (map.getZoom() <= 10) {
             console.log('<=10');
             my_layer.setStyle(function(feature) {
-                var new_color = $('#select-acc').val()=='job'?
-                    get_color(100*feature.properties[category]):
-                    get_color(100*feature.properties[landuse]);
+                var new_color = get_color(100*cached_json[cache_index][feature.propertie.num]);
                 return {
                     color: new_color,
                     opacity: 0.4,
@@ -200,9 +193,7 @@ $(window).resize(function () {
         else {
             console.log('>10');
             my_layer.setStyle(function(feature) {
-                var new_color = $('#select-acc').val()=='job'?
-                    get_color(100*feature.properties[category]):
-                    get_color(100*feature.properties[landuse]);
+                var new_color = get_color(100*cached_json[cache_index][feature.properties.num]);
                 return {
                     color: '#fff',
                     weight: 1,
@@ -227,16 +218,12 @@ $(window).resize(function () {
                 // show corresponding type and threshold
                 $('#form-type').removeClass('no-disp');
                 $('#form-type-less').addClass('no-disp');
-                $('#form-threshold').removeClass('no-disp');
-                $('#form-threshold-less').addClass('no-disp');
                 // show corresponding time
                 if ($('#select-type').val() == "transit") {
                     $('#form-time').removeClass('no-disp');
-                    $('#form-time-less').addClass('no-disp');
                 }
                 else {
                     $('#form-time').addClass('no-disp');
-                    $('#form-time-less').addClass('no-disp');
                 }
                 break;
             default:
@@ -246,16 +233,12 @@ $(window).resize(function () {
                 // show corresponding type and threshold
                 $('#form-type').addClass('no-disp');
                 $('#form-type-less').removeClass('no-disp');
-                $('#form-threshold').addClass('no-disp');
-                $('#form-threshold-less').removeClass('no-disp');
                 // show corresponding time
                 if ($('#select-type-less').val() == "transit") {
-                    $('#form-time').addClass('no-disp');
-                    $('#form-time-less').removeClass('no-disp');
+                    $('#form-time').removeClass('no-disp');
                 }
                 else {
                     $('#form-time').addClass('no-disp');
-                    $('#form-time-less').addClass('no-disp');
                 }
                 break;
         }
@@ -278,10 +261,10 @@ $(window).resize(function () {
     $('#select-type-less').change(function(){
         switch (this.value) {
             case "transit":
-                $('#form-time-less').removeClass('no-disp');
+                $('#form-time').removeClass('no-disp');
                 break;
             default:
-                $('#form-time-less').addClass('no-disp');
+                $('#form-time').addClass('no-disp');
                 break;
         }
     });
@@ -372,6 +355,7 @@ $(window).resize(function () {
             map.removeLayer(cta_layer);
         }
     });
+
     $('#checkbox-metra').change(function(){
         if ($('#checkbox-metra').is(':checked')) {
             map.addLayer(metra_layer);
@@ -381,15 +365,155 @@ $(window).resize(function () {
         }
     });
 
+    function render_layer(landuse, category, time_1_2) {
+
+        console.log('in render_layer()');
+
+        var data = cached_json[cache_index];
+
+        console.log('my_layer:');
+        console.log(my_layer);
+
+        if (landuse=="job") {
+            // cached_layers[cache_index] = L.geoJson(my_data.features, {
+            for (var i in my_layer._layers) {
+                var bg = my_layer._layers[i];
+                var num = bg.feature.properties.num;
+                var content = '';
+
+                if (_.has(data, num)) {
+                    bg.setStyle(acc_style(data[num]));
+                    content += 'Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                }
+                else {
+                    bg.setStyle(acc_style(0));
+                    content += 'Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                }
+                content += '<br>id: ' + bg.feature.properties.num;
+                content += '<br>GEOID10: ' + bg.feature.properties.GEOID10;
+                bg.bindLabel(content);
+            }
+        }
+        else {
+            // cached_layers[cache_index] = L.geoJson(my_data.features, {
+            for (var i in my_layer._layers) {
+                var bg = my_layer._layers[i];
+                var num = bg.feature.properties.num;
+                var content = '';
+
+                if (_.has(data, num)) {
+                    bg.setStyle(acc_style(data[num]));
+                    if (landuse == 'park_area') {
+                        content += 'Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse].toFixed(2);
+                    }
+                    else {
+                        content += 'Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
+                    }
+                }
+                else {
+                    bg.setStyle(acc_style(0));
+                    if (landuse == 'park_area') {
+                        content += 'Accessibility: N/A<br>Total number: ' + total_landuse[landuse].toFixed(2);
+                    }
+                    else {
+                        content += 'Accessibility: N/A<br>Total number: ' + total_landuse[landuse];
+                    }
+                }
+                content += '<br>id: ' + bg.feature.properties.num;
+                content += '<br>GEOID10: ' + bg.feature.properties.GEOID10;
+                bg.bindLabel(content);
+            }
+        }
+
+        console.log('calculation done');
+        time_2_3 = Date.now();
+        console.log(Date(time_2_3));
+        console.log(time_2_3 - time_1_2);
+        // end block 2
+
+        $('#map').spin(false);
+
+        // block 3
+        try {
+            legend.removeFrom(map);
+        } catch(e) {};
+        acc_layer.clearLayers();
+        if (acc_layer != undefined) {
+            map.removeLayer(acc_layer);
+        }
+
+        acc_layer.addLayer(my_layer).addTo(map);
+        legend.addTo(map);
+
+        // bing up CTA/Metra layers to top
+        if ($('#checkbox-cta').is(':checked')) {
+            cta_layer.bringToFront();
+        }
+        if ($('#checkbox-metra').is(':checked')) {
+            metra_layer.bringToFront();
+        }
+
+        //map.fitBounds(acc_layer.getBounds());
+
+        console.log('adding layer done');
+        time_done = Date.now();
+        console.log(Date(time_done));
+        console.log(time_done - time_2_3);
+        // end block 3
+    }
+
+    function get_attributes(landuse, category) {
+        console.log('in get_attributes()');
+        if (cached_json[cache_index] == undefined) {
+            console.log('nothing cached');
+            time_start = Date.now();
+            console.log(Date(time_start));
+
+            $.getJSON($SCRIPT_ROOT + '/' + cache_index, function(data) {
+
+                // block 1
+                cached_json[cache_index] = data;
+
+                console.log('got data');
+                time_1_2 = Date.now();
+                console.log(Date(time_1_2));
+                console.log(time_1_2 - time_start);
+                // end block 1
+
+                // block 2
+                val = [];
+                for (var i in data) {
+                    if (data[i]>=0) {
+                        val.push(100*data[i]);
+                    }
+                }
+                jenks_cutoffs = jenks(val, 7);
+                console.log('jenks:');
+                console.log(jenks_cutoffs);
+                jenks_cutoffs[0] = 0;
+                jenks_cutoffs.pop();
+                cached_jenks[cache_index] = jenks_cutoffs;
+                console.log(jenks_cutoffs);
+
+                render_layer(landuse, category, time_1_2);
+            });
+        }
+        else {
+            console.log('already has this json file');
+            time_1_2 = Date.now();
+            console.log(Date(time_1_2));
+            render_layer(landuse, category, time_1_2);
+        }
+    }
+
     // called when the button is clicked
     function show_map(e) {
-        landuse = $('#select-acc').val();
+        console.log('in show_map()');
+        var landuse = $('#select-acc').val();
         var type =  $('#select-type').val();
         var type_less =  $('#select-type-less').val();
         var time =  $('#select-time').val();
-        var time_less =  $('#select-time-less').val();
         var threshold =  $('#select-threshold').val();
-        var threshold_less =  $('#select-threshold-less').val();
         var filter =  $('#select-filter').val();
         var age =  $('#select-age').val();
         var earning =  $('#select-earning').val();
@@ -398,6 +522,9 @@ $(window).resize(function () {
         var ethnicity =  $('#select-ethnicity').val();
         var education =  $('#select-education').val();
         var gender =  $('#select-gender').val();
+        var category = null;
+
+        $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
 
         // check whether a class is specified for each category
         switch (filter) {
@@ -454,249 +581,65 @@ $(window).resize(function () {
                 category = "C000"
         }
 
-        filename = "static/json/acc_";
-        if (landuse != "job") {
-            filename += "landuse_" + type_less + "_";
-            if (type_less == "transit") {
-                filename += time_less + "_";
-            }
-            filename += threshold_less + '_.json';
-        }
-        else {
-            filename += type + "_";
-            if (type == "transit") {
-                filename += time + "_";
-            }
-            filename += threshold + '_.json';
-        }
+        var filename = 'static/json/';
+        // get the geometry if not done
 
         if (landuse != "job") {
-            cache_index = landuse + '_' + filename;
-        }
-        else {
-            cache_index = category + '_' + filename;
-        }
-
-        // if the layer is cached
-        // if (cache_index in cached_layers) {
-        //     console.log('layer cached');
-        //     time_2_3 = Date.now();
-        //     console.log(Date(time_2_3));
-
-        //     // unique block 3 (not included in the other 2 cases)
-        //     style_change();
-        //     // end unique block 3
-
-        //     // block 3
-        //     try {
-        //         legend.removeFrom(map);
-        //     } catch(e) {};
-        //     acc_layer.clearLayers();
-        //     if (typeof acc_layer != 'undefined') {
-        //         map.removeLayer(acc_layer);
-        //     }
-
-        //     acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
-        //     legend.addTo(map);
-        //     //map.fitBounds(acc_layer.getBounds());
-
-        //     console.log('adding layer done');
-        //     time_done = Date.now();
-        //     console.log(Date(time_done));
-        //     console.log(time_done - time_2_3)
-        //     // end block 3
-
-        // }
-        // // if the geojson file is cached
-        // else if (filename in cached_json) {
-        //     console.log('layer not cached, but json cached');
-        //     time_1_2 = Date.now();
-        //     console.log(Date(time_1_2));
-
-        //     // block 2
-        //     var val = [];
-        //     $.each(cached_json[filename].features, function(i, v) {
-        //         if (landuse=="job") {
-        //             val.push(100*v.properties[category]);
-        //         }
-        //         else {
-        //             val.push(100*v.properties[landuse]);
-        //         }
-        //     });
-        //     jenks_cutoffs = jenks(val, 7);
-        //     jenks_cutoffs[0] = 0;
-        //     jenks_cutoffs.pop();
-        //     cached_jenks[cache_index] = jenks_cutoffs;
-
-        //     if (landuse=="job") {
-        //         cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
-        //             style: acc_style,
-        //             filter: acc_filter,
-        //             onEachFeature: function(feature, layer) {
-        //                 var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
-        //                 layer.bindLabel(content);
-        //             }
-        //         });
-        //     }
-        //     else {
-        //          cached_layers[cache_index] = L.geoJson(cached_json[filename].features, {
-        //             style: landuse_style,
-        //             onEachFeature: function(feature, layer) {
-        //                 if (landuse == "park_area") {
-        //                     var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total area (sq. miles): ' + (total_landuse[landuse]).toFixed(1);
-        //                 }
-        //                 else {
-        //                     var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
-        //                 }
-        //                 layer.bindLabel(content);
-        //             }
-        //         });
-        //     }
-
-        //     console.log('calculation done');
-        //     time_2_3 = Date.now();
-        //     console.log(Date(time_2_3));
-        //     console.log(time_2_3 - time_1_2);
-        //     // end block 2
-
-        //     // block 3
-        //     try {
-        //         legend.removeFrom(map);
-        //     } catch(e) {}
-        //     acc_layer.clearLayers();
-        //     if (typeof acc_layer != 'undefined') {
-        //         map.removeLayer(acc_layer);
-        //     }
-
-        //     acc_layer.addLayer(cached_layers[cache_index]).addTo(map);
-        //     legend.addTo(map);
-        //     //map.fitBounds(acc_layer.getBounds());
-
-        //     console.log('adding layer done');
-        //     time_done = Date.now();
-        //     console.log(Date(time_done));
-        //     console.log(time_done - time_2_3);
-        //     // end block 3
-
-        // }
-
-        {
-            console.log('nothing cached');
-            time_start = Date.now();
-            console.log(Date(time_start));
-
-            $('#map').spin({lines: 12, length: 0, width: 8, radius: 12});
-
-            $.getJSON($SCRIPT_ROOT + '/' + filename, function(data) {
-
-                // block 1
-                // cached_json[filename] = data;
-                var my_data = data;
-
-                console.log('got data');
-                time_1_2 = Date.now();
-                console.log(Date(time_1_2));
-                console.log(time_1_2 - time_start);
-                // end block 1
-
-                // block 2
-                if (cached_jenks[cache_index] == undefined) {
-                    console.log('jenks not cached');
-                    val = [];
-                    $.each(my_data.features, function(i, v) {
-                        if (landuse=="job") {
-                            val.push(100*v.properties[category]);
-                        }
-                        else {
-                            val.push(100*v.properties[landuse]);
-                        }
-                    });
-                    jenks_cutoffs = jenks(val, 7);
-                    jenks_cutoffs[0] = 0;
-                    jenks_cutoffs.pop();
-                    cached_jenks[cache_index] = jenks_cutoffs;
-                }
-                else {
-                    console.log('jenks cached');
-                }
-
-                var my_geojson;
-
-
+            filename += 'acc_chicago_' + type_less + '/';
+            if (type_less == 'transit') {
+                filename += time + '/';
+            }
+            filename += threshold + '/' + landuse + '.json';
+            cache_index = filename;
+            if (!has_chicago_layer) {
                 var which_feature = 0;
-                if (landuse=="job") {
-                    // cached_layers[cache_index] = L.geoJson(my_data.features, {
-                    my_layer = L.geoJson(my_data.features, {
-                        style: acc_style,
-                        filter: acc_filter,
+                $.getJSON($SCRIPT_ROOT + '/static/json/chicago.topojson', function(data) {
+                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
                         onEachFeature: function(feature, layer) {
-                            var content = 'Accessibility: ' + (100*feature.properties[category]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
-                            layer.bindLabel(content);
                             feature.properties.num = which_feature;
-                            layer.on('click', clickHandler);
                             which_feature++;
                         }
                     });
-                    console.log('layer:');
-                    console.log(my_layer);
-                }
-                else {
-                    // cached_layers[cache_index] = L.geoJson(my_data.features, {
-                    my_layer = L.geoJson(my_data.features, {
-                        style: landuse_style,
-                        filter: acc_filter,
-                        onEachFeature: function(feature, layer) {
-                            if (landuse == "park_area") {
-                                var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + (total_landuse[landuse]).toFixed(2);
-                            }
-                            else {
-                                var content = 'Accessibility: ' + (100*feature.properties[landuse]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
-                            }
-                            layer.bindLabel(content);
-                            feature.properties.num = which_feature;
-                            layer.on('click', clickHandler);
-                            which_feature++;
-                        }
-                    });
-                }
-
-                console.log('calculation done');
-                time_2_3 = Date.now();
-                console.log(Date(time_2_3));
-                console.log(time_2_3 - time_1_2);
-                // end block 2
-
-                $('#map').spin(false);
-
-                // block 3
-                try {
-                    legend.removeFrom(map);
-                } catch(e) {};
-                acc_layer.clearLayers();
-                if (typeof acc_layer != 'undefined') {
-                    map.removeLayer(acc_layer);
-                }
-
-                acc_layer.addLayer(my_layer).addTo(map);
-                legend.addTo(map);
-                // bing up CTA/Metra layers to top
-                if ($('#checkbox-cta').is(':checked')) {
-                    cta_layer.bringToFront();
-                }
-                if ($('#checkbox-metra').is(':checked')) {
-                    metra_layer.bringToFront();
-                }
-
-                //map.fitBounds(acc_layer.getBounds());
-
-                console.log('adding layer done');
-                time_done = Date.now();
-                console.log(Date(time_done));
-                console.log(time_done - time_2_3);
-                // end block 3
-
-            });
+                    has_chicago_layer = true;
+                    console.log('got chicago layer');
+                    my_layer = chicago_layer;
+                    get_attributes(landuse, category);
+                });
+            }
+            else {
+                my_layer = chicago_layer;
+                get_attributes(landuse, category);
+            }
         }
+        else {
+            filename += 'acc_large_' + type + '/';
+            if (type == 'transit') {
+                filename += time + '/';
+            }
+            filename += threshold + '/' + category + '.json';
+            cache_index = filename;
+            if (!has_metro_layer) {
+                var which_feature = 1;
+                $.getJSON($SCRIPT_ROOT + '/static/json/metro.topojson', function(data) {
+                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
+                        onEachFeature: function(feature, layer) {
+                            feature.properties.num = which_feature;
+                            which_feature++;
+                        }
+                    });
+                    has_metro_layer = true;
+                    console.log('got metropolitan layer');
+                    my_layer = metro_layer;
+                    get_attributes(landuse, category);
+                });
+            }
+            else {
+                my_layer = metro_layer;
+                get_attributes(landuse, category);
+            }
+
+        }
+
     }
 
     $('#btn-submit').on('click', show_map);
@@ -716,7 +659,7 @@ $(window).resize(function () {
             _.each(my_layer._layers, function(bg){
                 var num = bg.feature.properties.num;
 
-                if (_.has(at:a, num))
+                if (_.has(data, num))
                 {
                     bg.setStyle({
                         fill: true,
@@ -841,8 +784,8 @@ $(window).resize(function () {
         return '#7c7dbb';
     }
 
-    function acc_style(feature) {
-        var color = get_color(100*feature.properties[category]);
+    function acc_style(num) {
+        var color = get_color(100*num);
         if (map.getZoom()<=10) {
             return {
                 fillColor: color,
@@ -863,31 +806,6 @@ $(window).resize(function () {
         }
     }
 
-    function landuse_style(feature) {
-        var color = get_color(100*feature.properties[landuse]);
-        if (map.getZoom()<=10) {
-            return {
-                fillColor: color,
-                weight: 1.5,
-                color: color,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            }
-        }
-        else {
-            return {
-                fillColor: color,
-                weight: 1,
-                color: '#fff',
-                opacity: 1,
-                fillOpacity: 0.7
-            }
-        }
-    }
-
-    function iso_style() {
-        var color = get_iso_color(feature.properties[])
-    }
 
     function acc_filter(feature, layer) {
         return feature.properties.GEOID10 == '170979900000' ? false :
