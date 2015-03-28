@@ -174,14 +174,14 @@ $(window).resize(function () {
     }
 
     function style_change() {
-        if (my_layer == undefined) {
+        if (!(has_metro_layer || has_chicago_layer)) {
             return;
         }
         console.log('zoom:', map.getZoom());
         if (map.getZoom() <= 10) {
             console.log('<=10');
             my_layer.setStyle(function(feature) {
-                var new_color = get_color(100*cached_json[cache_index][feature.propertie.num]);
+                var new_color = get_color(100*cached_json[cache_index][feature.properties.num]);
                 return {
                     color: new_color,
                     opacity: 0.4,
@@ -204,61 +204,25 @@ $(window).resize(function () {
         }
     }
 
-    var cur_acc_type;
-    var cur_travel_type;
-
     // which accessibility? job, or other land uses?
     $('#select-acc').change(function(){
-        cur_acc_type = this.value;
         switch (this.value) {
             case "job":
                 // show filter and categories
                 $('#form-filter').removeClass('no-disp');
                 $('#form-category').removeClass('no-disp');
-                // show corresponding type and threshold
-                $('#form-type').removeClass('no-disp');
-                $('#form-type-less').addClass('no-disp');
-                // show corresponding time
-                if ($('#select-type').val() == "transit") {
-                    $('#form-time').removeClass('no-disp');
-                }
-                else {
-                    $('#form-time').addClass('no-disp');
-                }
                 break;
             default:
                 // hide filter and categories
                 $('#form-filter').addClass('no-disp');
                 $('#form-category').addClass('no-disp');
-                // show corresponding type and threshold
-                $('#form-type').addClass('no-disp');
-                $('#form-type-less').removeClass('no-disp');
-                // show corresponding time
-                if ($('#select-type-less').val() == "transit") {
-                    $('#form-time').removeClass('no-disp');
-                }
-                else {
-                    $('#form-time').addClass('no-disp');
-                }
                 break;
         }
     })
 
-    // which type? auto, transit or weighted
-    // for job
-    $('#select-type').change(function(){
-        switch (this.value) {
-            case "transit":
-                $('#form-time').removeClass('no-disp');
-                break;
-            default:
-                $('#form-time').addClass('no-disp');
-                break;
-        }
-    });
 
-    // for other land use
-    $('#select-type-less').change(function(){
+    // which type? auto, transit, bicycle or walk?
+    $('#select-type').change(function(){
         switch (this.value) {
             case "transit":
                 $('#form-time').removeClass('no-disp');
@@ -365,153 +329,15 @@ $(window).resize(function () {
         }
     });
 
-    function render_layer(landuse, category, time_1_2) {
 
-        console.log('in render_layer()');
 
-        var data = cached_json[cache_index];
-
-        console.log('my_layer:');
-        console.log(my_layer);
-
-        if (landuse=="job") {
-            // cached_layers[cache_index] = L.geoJson(my_data.features, {
-            for (var i in my_layer._layers) {
-                var bg = my_layer._layers[i];
-                var num = bg.feature.properties.num;
-                var content = '';
-
-                if (_.has(data, num)) {
-                    bg.setStyle(acc_style(data[num]));
-                    content += 'Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
-                }
-                else {
-                    bg.setStyle(acc_style(0));
-                    content += 'Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
-                }
-                content += '<br>id: ' + bg.feature.properties.num;
-                content += '<br>GEOID10: ' + bg.feature.properties.GEOID10;
-                bg.bindLabel(content);
-            }
-        }
-        else {
-            // cached_layers[cache_index] = L.geoJson(my_data.features, {
-            for (var i in my_layer._layers) {
-                var bg = my_layer._layers[i];
-                var num = bg.feature.properties.num;
-                var content = '';
-
-                if (_.has(data, num)) {
-                    bg.setStyle(acc_style(data[num]));
-                    if (landuse == 'park_area') {
-                        content += 'Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse].toFixed(2);
-                    }
-                    else {
-                        content += 'Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + total_landuse[landuse];
-                    }
-                }
-                else {
-                    bg.setStyle(acc_style(0));
-                    if (landuse == 'park_area') {
-                        content += 'Accessibility: N/A<br>Total number: ' + total_landuse[landuse].toFixed(2);
-                    }
-                    else {
-                        content += 'Accessibility: N/A<br>Total number: ' + total_landuse[landuse];
-                    }
-                }
-                content += '<br>id: ' + bg.feature.properties.num;
-                content += '<br>GEOID10: ' + bg.feature.properties.GEOID10;
-                bg.bindLabel(content);
-            }
-        }
-
-        console.log('calculation done');
-        time_2_3 = Date.now();
-        console.log(Date(time_2_3));
-        console.log(time_2_3 - time_1_2);
-        // end block 2
-
-        $('#map').spin(false);
-
-        // block 3
-        try {
-            legend.removeFrom(map);
-        } catch(e) {};
-        acc_layer.clearLayers();
-        if (acc_layer != undefined) {
-            map.removeLayer(acc_layer);
-        }
-
-        acc_layer.addLayer(my_layer).addTo(map);
-        legend.addTo(map);
-
-        // bing up CTA/Metra layers to top
-        if ($('#checkbox-cta').is(':checked')) {
-            cta_layer.bringToFront();
-        }
-        if ($('#checkbox-metra').is(':checked')) {
-            metra_layer.bringToFront();
-        }
-
-        //map.fitBounds(acc_layer.getBounds());
-
-        console.log('adding layer done');
-        time_done = Date.now();
-        console.log(Date(time_done));
-        console.log(time_done - time_2_3);
-        // end block 3
-    }
-
-    function get_attributes(landuse, category) {
-        console.log('in get_attributes()');
-        if (cached_json[cache_index] == undefined) {
-            console.log('nothing cached');
-            time_start = Date.now();
-            console.log(Date(time_start));
-
-            $.getJSON($SCRIPT_ROOT + '/' + cache_index, function(data) {
-
-                // block 1
-                cached_json[cache_index] = data;
-
-                console.log('got data');
-                time_1_2 = Date.now();
-                console.log(Date(time_1_2));
-                console.log(time_1_2 - time_start);
-                // end block 1
-
-                // block 2
-                val = [];
-                for (var i in data) {
-                    if (data[i]>=0) {
-                        val.push(100*data[i]);
-                    }
-                }
-                jenks_cutoffs = jenks(val, 7);
-                console.log('jenks:');
-                console.log(jenks_cutoffs);
-                jenks_cutoffs[0] = 0;
-                jenks_cutoffs.pop();
-                cached_jenks[cache_index] = jenks_cutoffs;
-                console.log(jenks_cutoffs);
-
-                render_layer(landuse, category, time_1_2);
-            });
-        }
-        else {
-            console.log('already has this json file');
-            time_1_2 = Date.now();
-            console.log(Date(time_1_2));
-            render_layer(landuse, category, time_1_2);
-        }
-    }
+    $('#btn-submit').on('click', show_map);
 
     // called when the button is clicked
     function show_map(e) {
         console.log('in show_map()');
         var landuse = $('#select-acc').val();
         var type =  $('#select-type').val();
-        var type_less =  $('#select-type-less').val();
         var time =  $('#select-time').val();
         var threshold =  $('#select-threshold').val();
         var filter =  $('#select-filter').val();
@@ -582,16 +408,18 @@ $(window).resize(function () {
         }
 
         var filename = 'static/json/';
-        // get the geometry if not done
 
+        // get the geometry if not done
         if (landuse != "job") {
-            filename += 'acc_chicago_' + type_less + '/';
-            if (type_less == 'transit') {
+            filename += 'acc_chicago_' + type + '/';
+            if (type == 'transit') {
                 filename += time + '/';
             }
             filename += threshold + '/' + landuse + '.json';
             cache_index = filename;
+            console.log('cach_index:', cache_index);
             if (!has_chicago_layer) {
+                console.log('no chicago layer, downloading');
                 var which_feature = 0;
                 $.getJSON($SCRIPT_ROOT + '/static/json/chicago.topojson', function(data) {
                     chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
@@ -618,8 +446,10 @@ $(window).resize(function () {
             }
             filename += threshold + '/' + category + '.json';
             cache_index = filename;
+            console.log('cach_index:', cache_index);
             if (!has_metro_layer) {
-                var which_feature = 1;
+                console.log('no metropolitan layer, downloading');
+                var which_feature = 0;
                 $.getJSON($SCRIPT_ROOT + '/static/json/metro.topojson', function(data) {
                     metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
                         onEachFeature: function(feature, layer) {
@@ -630,6 +460,7 @@ $(window).resize(function () {
                     has_metro_layer = true;
                     console.log('got metropolitan layer');
                     my_layer = metro_layer;
+                    console.log('my_layer:',my_layer);
                     get_attributes(landuse, category);
                 });
             }
@@ -639,10 +470,149 @@ $(window).resize(function () {
             }
 
         }
-
     }
 
-    $('#btn-submit').on('click', show_map);
+    function get_attributes(landuse, category) {
+        console.log('in get_attributes()');
+        if (cached_json[cache_index] == undefined) {
+            console.log('nothing cached');
+            time_start = Date.now();
+            console.log(Date(time_start));
+
+            console.log('cache_index:', cache_index);
+
+            $.getJSON($SCRIPT_ROOT + '/' + cache_index, function(data) {
+
+                // block 1
+                cached_json[cache_index] = data;
+
+                console.log('got data');
+                time_1_2 = Date.now();
+                console.log(Date(time_1_2));
+                console.log(time_1_2 - time_start);
+                // end block 1
+
+                // block 2
+                val = [];
+                for (var i in data) {
+                    if (data[i]>=0) {
+                        val.push(100*data[i]);
+                    }
+                }
+                jenks_cutoffs = jenks(val, 7);
+                console.log('jenks:', jenks_cutoffs);
+                jenks_cutoffs[0] = 0;
+                jenks_cutoffs.pop(); // don't need to know what is the largest
+                cached_jenks[cache_index] = jenks_cutoffs;
+                console.log(jenks_cutoffs);
+
+                render_layer(landuse, category, time_1_2);
+            });
+        }
+        else {
+            console.log('already has this json file');
+            time_1_2 = Date.now();
+            console.log(Date(time_1_2));
+            render_layer(landuse, category, time_1_2);
+        }
+    }
+
+    function render_layer(landuse, category, time_1_2) {
+
+        console.log('in render_layer()');
+        console.log('cache_index:', cache_index);
+
+        var data = cached_json[cache_index];
+
+        console.log('my_layer:');
+        console.log(my_layer);
+        console.log(my_layer==metro_layer)
+
+        //for (var i in my_layer._layers) {
+        my_layer.eachLayer(function(bg){
+            //var bg = my_layer._layers[i];
+            var num = bg.feature.properties.num;
+            if (num == 0) {
+                console.log('bg[0]:', bg);
+            }
+            var content = 'id: ' + bg.feature.properties.num + '<br>GEOID10: ' + bg.feature.properties.GEOID10;
+            if (landuse=="job") {
+                if (_.has(data, num)) {
+                    bg.setStyle(acc_style(data[num]));
+                    content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                }
+                else {
+                    bg.setStyle(acc_style(0));
+                    content += '<br>Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                }
+            }
+            else {
+                if (_.has(data, num)) {
+                    bg.setStyle(acc_style(data[num]));
+                    content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + (landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse];
+                }
+                else {
+                    bg.setStyle(acc_style(0));
+                    content += '<br>Accessibility: N/A<br>Total number: ' + (landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse];
+                }
+            }
+            bg.bindLabel(content);
+            if (num == 5913) {
+                console.log('bg[0]:', bg);
+            }
+        });
+
+        console.log(my_layer);
+
+        console.log('calculation done');
+        time_2_3 = Date.now();
+        console.log(Date(time_2_3));
+        console.log(time_2_3 - time_1_2);
+        // end block 2
+
+        $('#map').spin(false);
+
+        // block 3
+        try {
+            legend.removeFrom(map);
+        } catch(e) {};
+        //acc_layer.clearLayers();
+        // if (acc_layer != undefined) {
+        //     map.removeLayer(acc_layer);
+        // }
+
+        if (landuse=="job") {
+            try {
+                map.removeLayer(chicago_layer);
+            } catch(e) {};
+            metro_layer.addTo(map);
+        }
+        else {
+            try {
+                map.removeLayer(metro_layer);
+            } catch(e) {};
+            chicago_layer.addTo(map);
+        }
+        //acc_layer.addLayer(my_layer).addTo(map);
+
+        legend.addTo(map);
+
+        // bing up CTA/Metra layers to top
+        if ($('#checkbox-cta').is(':checked')) {
+            cta_layer.bringToFront();
+        }
+        if ($('#checkbox-metra').is(':checked')) {
+            metra_layer.bringToFront();
+        }
+
+        //map.fitBounds(acc_layer.getBounds());
+
+        console.log('adding layer done');
+        time_done = Date.now();
+        console.log(Date(time_done));
+        console.log(time_done - time_2_3);
+        // end block 3
+    }
 
     function clickHandler(e){
         console.log('in clickHandler()');

@@ -140,7 +140,7 @@ $(window).resize(function () {
 
                 // block 2
                 if (layer == 'metro') {
-                    var which_feature = 1;
+                    var which_feature = 0;
                     metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
                         style: empty_style,
                         //filter: acc_filter,
@@ -217,12 +217,14 @@ $(window).resize(function () {
     function clickHandler_chicago(e){
         console.log('in clickHandler_chicago()');
         cur_num = e.target.feature.properties.num;
+        console.log('clicked feature id:', cur_num);
         select_bg(cur_num, true);
     }
 
     function clickHandler_metro(e){
         console.log('in clickHandler_metro()');
         cur_num = e.target.feature.properties.num;
+        console.log('clicked feature id:', cur_num);
         select_bg(cur_num, false);
     }
 
