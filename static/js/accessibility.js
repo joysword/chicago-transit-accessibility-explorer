@@ -524,18 +524,11 @@ $(window).resize(function () {
 
         var data = cached_json[cache_index];
 
-        console.log('my_layer:');
-        console.log(my_layer);
-        console.log(my_layer==metro_layer)
-
-        //for (var i in my_layer._layers) {
-        my_layer.eachLayer(function(bg){
-            //var bg = my_layer._layers[i];
+        for (var i in my_layer._layers) {
+        //my_layer.eachLayer(function(bg){
+            var bg = my_layer._layers[i];
             var num = bg.feature.properties.num;
-            if (num == 0) {
-                console.log('bg[0]:', bg);
-            }
-            var content = 'id: ' + bg.feature.properties.num + '<br>GEOID10: ' + bg.feature.properties.GEOID10;
+            var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
             if (landuse=="job") {
                 if (_.has(data, num)) {
                     bg.setStyle(acc_style(data[num]));
@@ -549,20 +542,15 @@ $(window).resize(function () {
             else {
                 if (_.has(data, num)) {
                     bg.setStyle(acc_style(data[num]));
-                    content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + (landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse];
+                    content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
                 }
                 else {
                     bg.setStyle(acc_style(0));
-                    content += '<br>Accessibility: N/A<br>Total number: ' + (landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse];
+                    content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
                 }
             }
             bg.bindLabel(content);
-            if (num == 5913) {
-                console.log('bg[0]:', bg);
-            }
-        });
-
-        console.log(my_layer);
+        }
 
         console.log('calculation done');
         time_2_3 = Date.now();
