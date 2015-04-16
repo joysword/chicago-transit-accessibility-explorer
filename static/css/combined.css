@@ -1,0 +1,22 @@
+table {
+	width: 100%;
+	border: 0;
+}
+
+.row {
+	margin: 0 2px;
+}
+
+.col-md-6 {
+	padding: 0 2px;
+}
+
+#map {
+	padding: 0;
+	display: flex;
+}
+
+#map2 {
+	padding: 0;
+	display: flex;
+}

@@ -96,6 +96,8 @@ $(window).resize(function () {
         }
     });
 
+    $('#btn-submit').on('click', show_map);
+
     // called when the button is clicked
     function show_map(e) {
         console.log('in show_map()');
@@ -211,8 +213,6 @@ $(window).resize(function () {
             });
         }
     }
-
-    $('#btn-submit').on('click', show_map);
 
     function clickHandler_chicago(e){
         console.log('in clickHandler_chicago()');
@@ -427,12 +427,6 @@ $(window).resize(function () {
             fillColor: '#7c7dbb',
             fillOpacity: 0.5,
         }
-    }
-
-    function acc_filter(feature, layer) {
-        return feature.properties.GEOID10 == '170979900000' ? false :
-            feature.properties.GEOID10 == '170319900000' ? false :
-            true;
     }
 
     function load_lines() {

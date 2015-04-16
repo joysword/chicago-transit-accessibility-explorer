@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+<html lang="en-US" style="height: 100%;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="description" content="">
+        <meta name="description" content="This tool shows visualizations of multi-modal accessibility of Chicago metropolitan area">
         <meta name="author" content="Shi Yin">
 
         <title>Metropolitan Chicago Accessibility Explorer</title>
@@ -11,8 +11,6 @@
 		<!-- Bootstrap core CSS -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
-        <!--<link href="//plenario.datamade.us/static/css/bootstrap.min.css" rel="stylesheet" >-->
-        <!--<link href="//plenario.datamade.us/static/css/font-awesome.css" rel="stylesheet" >-->
 
         <!-- Mapbox core CSS -->
         <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
@@ -41,7 +39,9 @@
             </div>
             <div class="navbar-collapse collapse pull-right">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class=""><a href="{{ url_for('index') }}">Accessibility</a></li>
+                    <li class="active"><a href="{{ url_for('travel') }}">Travel Time</a></li>
+                    <li class=""><a href="{{ url_for('combined') }}">Combined</a></li>
                     <li class=""><a href="{{ url_for('about') }}">About</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -175,7 +175,7 @@
 
         <!-- custom js -->
 
-        <script src="{{ url_for('static', filename='js/accessibility_test.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/travel.js') }}"></script>
 
     </body>
 </html>

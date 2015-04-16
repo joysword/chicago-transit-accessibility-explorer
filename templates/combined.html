@@ -8,7 +8,7 @@
 
         <title>Metropolitan Chicago Accessibility Explorer</title>
 
-		<!-- Bootstrap core CSS -->
+        <!-- Bootstrap core CSS -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
 
@@ -19,6 +19,7 @@
 
         <!-- custom css -->
         <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/combined.css') }}" rel="stylesheet">
 
         <script type='text/javascript'>
             $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -53,9 +54,9 @@
 
             <div class="navbar-collapse collapse pull-right">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="{{ url_for('index') }}">Accessibility</a></li>
+                    <li class=""><a href="{{ url_for('index') }}">Accessibility</a></li>
                     <li class=""><a href="{{ url_for('travel') }}">Travel Time</a></li>
-                    <li class=""><a href="{{ url_for('combined') }}">Combined</a></li>
+                    <li class="active"><a href="{{ url_for('combined') }}">Combined</a></li>
                     <li class=""><a href="{{ url_for('about') }}">About</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -63,8 +64,14 @@
         <!-- end of Navigation bar -->
 
         <!-- main -->
-
-        <div id="map"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="map"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="map2"></div>
+            </div>
+        </div>
         <div id="menu" class="well">
             <div id="sidebar">
                 <div>
@@ -298,7 +305,7 @@
         <!-- underscore.js -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
 
-        <!-- combineMapbox core JavaScript -->
+        <!-- Mapbox core JavaScript -->
         <script src='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
@@ -310,7 +317,7 @@
         <script src="{{ url_for('static', filename='js/topojson.js') }}"></script>
 
         <!-- custom js -->
-        <script src="{{ url_for('static', filename='js/accessibility.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/combined.js') }}"></script>
 
         <!-- Start of StatCounter Code for Default Guide -->
         <script type="text/javascript">
