@@ -11,13 +11,6 @@
         <!-- Bootstrap core CSS -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
-        <!--<link href="//plenario.datamade.us/static/css/bootstrap.min.css" rel="stylesheet" >-->
-        <!--<link href="//plenario.datamade.us/static/css/font-awesome.css" rel="stylesheet" >-->
-
-        <!-- Mapbox core CSS -->
-        <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
-        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
-        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
 
         <!-- custom css -->
         <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
@@ -41,7 +34,9 @@
             </div>
             <div class="navbar-collapse collapse pull-right">
                 <ul class="nav navbar-nav">
-                    <li class=""><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class=""><a href="{{ url_for('index') }}">Accessibility</a></li>
+                    <li class=""><a href="{{ url_for('travel') }}">Travel Time</a></li>
+                    <li class=""><a href="{{ url_for('combined') }}">Combined</a></li>
                     <li class="active"><a href="{{ url_for('about') }}">About</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -50,13 +45,19 @@
 
         <!-- main -->
             <div class="about">
-                <p>The Metropolitan Chicago Accessibility Explorer is a project that was funded by IDOT's METSI program and the National Center for Transit Research NCTR-USF through UIC's Urban Transportation Center. The project was undertaken by the <a href="http://ntilahun.com/" target="_blank">Travel Behavior and Urban Systems Research Group</a> at the <a href="http://www.uic.edu/cuppa/upp/" target="_blank">Department of Urban Planning and Policy</a> at University of Illinois at Chicago.</p>
+                <h2>About</h2>
+                <p>The goal of this project is to develop accessibility metrics for a variety of activities in the Chicago Metropolitan area and to present them using a relatively simple, user friendly, online platform.  We aim to provide a resource that planners and policy makers can readily use to evaluate how well the transportation system is connecting people to activity locations around them.  Using the Accessibility Explorer, questions about how many jobs, or park land, or groceries etc. can be reached by residents of a specific neighborhood in reasonable time by a given mode can be answered quickly. One can evaluate the changes to accessibility over the course of a day as transit systems adjust their schedules to demand.  It allows us to see the spatial equities (and inequities) of access the transportation-land use nexus currently provides and which areas it affects. </p>
+                <p>The tool also has the capability to show how far one can travel from different neighborhoods/areas of the metropolitan area by different modes. Together with the accessibility explorer, this capability offers the user the see where changes in land use can be made to alter accessibility to jobs or other opportunities for different origins.</p>
+                <p>More detail on the Accessibility Explorer can be found in our report here: [in progress].</p>
 
-                <p>Details of the Accessibility Explorer are available here: [to be updated].</p>
+                <h2>Sponsors</h2>
+                <p>The Metropolitan Chicago Accessibility Explorer was funded by the <a href="http://utc.webhost.uic.edu/metsi/" target="_blank">Metropolitan Transportation Support Initiative (METSI)</a> and the National Center for Transit Research (NCTR-USF) through UIC's <a href="http://utc.uic.edu/" target="_blank">Urban Transportation Center</a>. </p>
+                <p>The project was undertaken by the <a href="http://ntilahun.com/" target="_blank">Urban Transportation & Behavior Research Group</a> at the Department of Urban Planning and Policy at UIC. </p>
 
-                <p>Questions? Please contact <a href="http://ntilahun.com/people/" target="_blank">Dr. Nebiyou Tilahun</a> at ntilahun at uic.edu.</p>
+                <h2>Questions</h2>
 
-                <p>Server and website are maintained by <a href="http://joysword.com" target="_blank">Shi Yin</a>.</p>
+                <p>Please contact Dr. Nebiyou Tilahun at ntilahun at uic dot edu.</p>
+                <p>Server and website are maintained by <a href="http://joysword.com/" target="_blank">Shi Yin</a>. Shi can be reached at syin8 at uic dot edu.</p>
 
                 [This page is under construction.]
             </div>
