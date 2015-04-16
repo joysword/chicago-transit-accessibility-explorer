@@ -13,7 +13,7 @@ def travel():
 	return render_template('travel.html')
 
 @app.route('/combined')
-def combine():
+def combined():
 	return render_template('combined.html')
 
 @app.route('/about')
