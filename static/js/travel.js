@@ -9,7 +9,6 @@ $(window).resize(function () {
     //var cached_layers = {};
     var cached_json = {};
     var cached_jenks = {};
-    var acc_layer = new L.FeatureGroup();
     var metro_layer;
     var chicago_layer;
     var jenks_cutoffs;
@@ -20,7 +19,8 @@ $(window).resize(function () {
     var metra_layer = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow"];
 
-    var cur_num;
+    var cur_num_metro;
+    var cur_num_chicago;
 
     var iso_cutoff = [600, 1200, 1800, 2700, 3600, 4500, 5400, 6300, 7200];
 
@@ -65,8 +65,6 @@ $(window).resize(function () {
 
     legend_iso.addTo(map);
 
-    var cur_layer;
-
     // which type? auto, transit or weighted
     $('#select-type').change(function(){
         switch (this.value) {
@@ -106,27 +104,33 @@ $(window).resize(function () {
         var time =  $('#select-time').val();
 
         var filename = 'static/json/' + layer + '.topojson';
-        if (layer == "metro") {
-            filename == 'static/json/metro.topojson';
-        }
-        else {
-            filename = 'static/json/chicago.topojson';
-        }
 
         {
 
             if (layer=="metro") {
                 if (typeof metro_layer != 'undefined') {
-                    if (typeof cur_num != 'undefined') {
-                        select_bg(cur_num, false);
+                    if (map.hasLayer(chicago_layer)) {
+                        map.removeLayer(chicago_layer);
+                    }
+                    if (!map.hasLayer(metro_layer)) {
+                        map.addLayer(metro_layer);
+                    }
+                    if (typeof cur_num_metro != 'undefined') {
+                        select_bg(cur_num_metro, false);
                     }
                     return;
                 }
             }
             else {
                 if (typeof chicago_layer != 'undefined') {
-                    if (typeof cur_num != 'undefined') {
-                        select_bg(cur_num, true);
+                    if (map.hasLayer(metro_layer)) {
+                        map.removeLayer(metro_layer);
+                    }
+                    if (!map.hasLayer(chicago_layer)) {
+                        map.addLayer(chicago_layer);
+                    }
+                    if (typeof cur_num_chicago != 'undefined') {
+                        select_bg(cur_num_chicago, true);
                     }
                     return;
                 }
@@ -185,16 +189,21 @@ $(window).resize(function () {
                 $('#map').spin(false);
 
                 // block 3
-                acc_layer.clearLayers();
-                if (typeof acc_layer != 'undefined') {
-                    map.removeLayer(acc_layer);
-                }
                 if (layer=='metro') {
-                    acc_layer.addLayer(metro_layer).addTo(map);
-                    console.log('metro layer added');
+                    if (map.hasLayer(chicago_layer)) {
+                        map.removeLayer(chicago_layer);
+                    }
+                    if (!map.hasLayer(metro_layer)) {
+                        map.addLayer(metro_layer);
+                    }
                 }
                 else {
-                    acc_layer.addLayer(chicago_layer).addTo(map);
+                    if (map.hasLayer(metro_layer)) {
+                        map.removeLayer(metro_layer);
+                    }
+                    if (!map.hasLayer(chicago_layer)) {
+                        map.addLayer(chicago_layer);
+                    }
                 }
 
                 // bing up CTA/Metra layers to top
@@ -216,16 +225,16 @@ $(window).resize(function () {
 
     function clickHandler_chicago(e){
         console.log('in clickHandler_chicago()');
-        cur_num = e.target.feature.properties.num;
-        console.log('clicked feature id:', cur_num);
-        select_bg(cur_num, true);
+        cur_num_chicago = e.target.feature.properties.num;
+        console.log('clicked feature id:', cur_num_chicago);
+        select_bg(cur_num_chicago, true);
     }
 
     function clickHandler_metro(e){
         console.log('in clickHandler_metro()');
-        cur_num = e.target.feature.properties.num;
-        console.log('clicked feature id:', cur_num);
-        select_bg(cur_num, false);
+        cur_num_metro = e.target.feature.properties.num;
+        console.log('clicked feature id:', cur_num_metro);
+        select_bg(cur_num_metro, false);
     }
 
     function select_bg(num, isChicago){

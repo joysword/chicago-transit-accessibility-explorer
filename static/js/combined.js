@@ -11,9 +11,10 @@ $(window).resize(function () {
     var cached_json = {};
     var cache_index;
     var cached_jenks = {};
-    var acc_layer = new L.FeatureGroup();
     var metro_layer;
     var chicago_layer;
+    var metro_layer_2;
+    var chicago_layer_2;
     var has_metro_layer = false;
     var has_chicago_layer = false;
     var jenks_cutoffs;
@@ -81,7 +82,8 @@ $(window).resize(function () {
     total_landuse['grocery'] = 506;
     total_landuse['park_count'] = 580;
 
-    var cur_num;
+    var cur_num_metro;
+    var cur_num_chicago;
 
     var iso_cutoff = [600, 1200, 1800, 2700, 3600, 4500, 5400, 6300, 7200];
 
@@ -186,72 +188,6 @@ $(window).resize(function () {
     }
 
     legend_iso.addTo(map2);
-
-    // var drawnItems = L.featureGroup().addTo(map);
-
-    // var drawControl = new L.Control.Draw({
-    //     edit: {
-    //         featureGroup: drawnItems
-    //     },
-    //     draw: {
-    //         polyline: false,
-    //         marker: false,
-    //         circle: {
-    //             shapeOptions: {
-    //                 'color': '#123456',
-    //                 'opacity': 0.4,
-    //                 'fillOpacity': 0
-    //             }
-    //         },
-    //         polygon: {
-    //             shapeOptions: {
-    //                 'color': '#123456',
-    //                 'opacity': 0.4,
-    //                 'fillOpacity': 0
-    //             }
-    //         },
-    //         rectangle: {
-    //             shapeOptions: {
-    //                 'color': '#123456',
-    //                 'opacity': 0.4,
-    //                 'fillOpacity': 0
-    //             }
-    //         }
-    //     }
-    // });
-
-    // // map.addControl(drawControl);
-    // map.on('draw:created', draw_create);
-    // map.on('draw:edited', draw_edit);
-    // map.on('draw:deleted', draw_delete);
-    // map.on('draw:drawstart', draw_delete);
-
-    // function draw_create(e) {
-    //     drawnItems.clearLayers();
-    //     drawnItems.addLayer(e.layer);
-    //     this.dataLayer = e.layer.toGeoJSON();
-    // }
-
-    // function draw_edit(e) {
-    //     drawnItems.clearLayers();
-    // }
-
-    // function draw_edit(e) {
-    //     var layers = e.layers;
-    //     drawnItems.clearLayers();
-    //     var self = this;
-    //     layers.eachLayer(function(layer){
-    //         self.dataLayer = layer.toGeoJSON();
-    //         self.drawnItems.addLayer(layer);
-    //     });
-    // }
-
-    // function draw_delete(e){
-    //     acc_layer.clearLayers();
-    //     drawnItems.clearLayers();
-    // }
-
-    var cur_layer;
 
     // which accessibility? job, or other land uses?
     $('#select-acc').change(function(){
@@ -511,7 +447,6 @@ $(window).resize(function () {
                     has_metro_layer = true;
                     console.log('got metropolitan layer');
                     my_layer = metro_layer;
-                    console.log('my_layer:',my_layer);
                     get_attributes(landuse, category);
                 });
             }
@@ -655,32 +590,38 @@ $(window).resize(function () {
 
     function show_map2(e) {
         console.log('in show_map2()');
-        layer = ($('#select-layer').val()=='job')?'metro':'chicago';
+        layer = ($('#select-acc').val()=='job')?'metro':'chicago';
         var type =  $('#select-type').val();
         var time =  $('#select-time').val();
 
         var filename = 'static/json/' + layer + '.topojson';
-        if (layer == "metro") {
-            filename == 'static/json/metro.topojson';
-        }
-        else {
-            filename = 'static/json/chicago.topojson';
-        }
 
         {
 
             if (layer=="metro") {
-                if (typeof metro_layer != 'undefined') {
-                    if (typeof cur_num != 'undefined') {
-                        select_bg(cur_num, false);
+                if (typeof metro_layer_2 != 'undefined') {
+                    if (map2.hasLayer(chicago_layer_2)) {
+                        map2.removeLayer(chicago_layer_2);
+                    }
+                    if (!map2.hasLayer(metro_layer_2)) {
+                        map2.addLayer(metro_layer_2);
+                    }
+                    if (typeof cur_num_metro != 'undefined') {
+                        select_bg(cur_num_metro, false);
                     }
                     return;
                 }
             }
             else {
-                if (typeof chicago_layer != 'undefined') {
-                    if (typeof cur_num != 'undefined') {
-                        select_bg(cur_num, true);
+                if (typeof chicago_layer_2 != 'undefined') {
+                    if (map2.hasLayer(metro_layer_2)) {
+                        map2.removeLayer(metro_layer_2);
+                    }
+                    if (!map2.hasLayer(chicago_layer_2)) {
+                        map2.addLayer(chicago_layer_2);
+                    }
+                    if (typeof cur_num_chicago != 'undefined') {
+                        select_bg(cur_num_chicago, true);
                     }
                     return;
                 }
@@ -697,7 +638,7 @@ $(window).resize(function () {
                 // block 2
                 if (layer == 'metro') {
                     var which_feature = 0;
-                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
+                    metro_layer_2 = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
                         style: empty_style,
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
@@ -711,12 +652,12 @@ $(window).resize(function () {
                     });
                     console.log('which_feature:');
                     console.log(which_feature);
-                    console.log(metro_layer);
+                    console.log(metro_layer_2);
                 }
                 else {
                     var which_feature = 0;
                     // cached_layers[cache_index] = L.geoJson(my_data.features, {
-                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
+                    chicago_layer_2 = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
                         style: empty_style,
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
@@ -730,7 +671,7 @@ $(window).resize(function () {
                     });
                     console.log('which_feature:');
                     console.log(which_feature);
-                    console.log(chicago_layer);
+                    console.log(chicago_layer_2);
                 }
 
                 console.log('calculation done');
@@ -739,16 +680,21 @@ $(window).resize(function () {
                 $('#map2').spin(false);
 
                 // block 3
-                acc_layer.clearLayers();
-                if (typeof acc_layer != 'undefined') {
-                    map2.removeLayer(acc_layer);
-                }
                 if (layer=='metro') {
-                    acc_layer.addLayer(metro_layer).addTo(map2);
-                    console.log('metro layer added');
+                    if (map2.hasLayer(chicago_layer_2)) {
+                        map2.removeLayer(chicago_layer_2);
+                    }
+                    if (!map2.hasLayer(metro_layer_2)) {
+                        map2.addLayer(metro_layer_2);
+                    }
                 }
                 else {
-                    acc_layer.addLayer(chicago_layer).addTo(map2);
+                    if (map2.hasLayer(metro_layer_2)) {
+                        map2.removeLayer(metro_layer_2);
+                    }
+                    if (!map2.hasLayer(chicago_layer_2)) {
+                        map2.addLayer(chicago_layer_2);
+                    }
                 }
 
                 // bing up CTA/Metra layers to top
@@ -770,16 +716,16 @@ $(window).resize(function () {
 
     function clickHandler_chicago(e){
         console.log('in clickHandler_chicago()');
-        cur_num = e.target.feature.properties.num;
-        console.log('clicked feature id:', cur_num);
-        select_bg(cur_num, true);
+        cur_num_chicago = e.target.feature.properties.num;
+        console.log('clicked feature id:', cur_num_chicago);
+        select_bg(cur_num_chicago, true);
     }
 
     function clickHandler_metro(e){
         console.log('in clickHandler_metro()');
-        cur_num = e.target.feature.properties.num;
-        console.log('clicked feature id:', cur_num);
-        select_bg(cur_num, false);
+        cur_num_metro = e.target.feature.properties.num;
+        console.log('clicked feature id:', cur_num_metro);
+        select_bg(cur_num_metro, false);
     }
 
     function select_bg(num, isChicago){
@@ -798,7 +744,7 @@ $(window).resize(function () {
 
         if (isChicago) {
             $.getJSON($SCRIPT_ROOT + file_prefix + "chicago_" + travel_type + "/" + num + '.json', function(data){
-                $.each(chicago_layer._layers, function(i, bg){
+                $.each(chicago_layer_2._layers, function(i, bg){
                     var num = bg.feature.properties.num;
                     //console.log('num:', num);
 
@@ -821,7 +767,7 @@ $(window).resize(function () {
         }
         else {
             $.getJSON($SCRIPT_ROOT + file_prefix + "large_" + travel_type + "/" + num + '.json', function(data){
-                $.each(metro_layer._layers, function(i, bg){
+                $.each(metro_layer_2._layers, function(i, bg){
                     var num = bg.feature.properties.num;
                     //console.log('num:', num);
 

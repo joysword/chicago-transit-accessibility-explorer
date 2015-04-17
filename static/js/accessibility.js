@@ -602,39 +602,6 @@ $(window).resize(function () {
         // end block 3
     }
 
-    function clickHandler(e){
-        console.log('in clickHandler()');
-        select_bg(e.target.feature.properties.num);
-    }
-
-    function select_bg(num){
-
-        console.log('in select_bg()');
-
-        bg = num;
-        //updateHash();
-        $.getJSON($SCRIPT_ROOT + "/static/json/chicago_od_driving_" + num + '.json', function(data){
-            _.each(my_layer._layers, function(bg){
-                var num = bg.feature.properties.num;
-
-                if (_.has(data, num))
-                {
-                    bg.setStyle({
-                        fill: true,
-                        fillColor: get_iso_color(data[num]),
-                    });
-                }
-                else
-                {
-                    hex.setStyle({
-                        fillOpacity: 0,
-                        stroke: false
-                    });
-                }
-            });
-        });
-    }
-
     var map_colors1 = [
         '#deebf7',
         '#c6dbef',
