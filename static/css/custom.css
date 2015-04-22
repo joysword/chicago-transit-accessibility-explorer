@@ -236,6 +236,19 @@ body {
   left: 5px;
   top: 55px;
 }
+#menu.well {
+  padding: 15px 15px 0 15px;
+}
+#menu li {
+  margin: 0 15px 0 0;
+}
+#menu .row {
+  margin-bottom: 15px;
+}
+#menu label {
+  margin: 0 10px 0 0;
+  vertical-align: middle;
+}
 .navbar {
   margin-bottom: 0px;
 }
@@ -258,6 +271,21 @@ body {
   font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
 }
 
-#sidebar {
-  width: 16em;
+.combined.row {
+  margin: 0 2px;
 }
+
+.combined .col-md-6 {
+  padding: 0 2px;
+}
+
+.combined #map {
+  padding: 0;
+  display: flex;
+}
+
+.combined #map2 {
+  padding: 0;
+  display: flex;
+}
+

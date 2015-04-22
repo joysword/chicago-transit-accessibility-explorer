@@ -17,8 +17,7 @@ $(window).resize(function () {
     var has_chicago_layer = false;
     var jenks_cutoffs;
     var cta_layer = new L.FeatureGroup();
-    var metra_layer = new L.FeatureGroup();
-    var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow"];
+    var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow", "metra"];
 
     var val = [];
 
@@ -220,7 +219,6 @@ $(window).resize(function () {
         }
     })
 
-
     // which type? auto, transit, bicycle or walk?
     $('#select-type').change(function(){
         switch (this.value) {
@@ -319,17 +317,6 @@ $(window).resize(function () {
             map.removeLayer(cta_layer);
         }
     });
-
-    $('#checkbox-metra').change(function(){
-        if ($('#checkbox-metra').is(':checked')) {
-            map.addLayer(metra_layer);
-        }
-        else {
-            map.removeLayer(metra_layer);
-        }
-    });
-
-
 
     $('#btn-submit').on('click', show_map);
 
@@ -589,9 +576,6 @@ $(window).resize(function () {
         if ($('#checkbox-cta').is(':checked')) {
             cta_layer.bringToFront();
         }
-        if ($('#checkbox-metra').is(':checked')) {
-            metra_layer.bringToFront();
-        }
 
         //map.fitBounds(acc_layer.getBounds());
 
@@ -742,19 +726,6 @@ $(window).resize(function () {
         for (var i in cta_line_names) {
             load_line(cta_line_names[i]);
         }
-        $.getJSON($SCRIPT_ROOT + "/static/json/metra.json", function(data) {
-            metra_layer.addLayer(
-                L.geoJson(data.features, {
-                    style: function(feature) {
-                        return {
-                            weight: 3,
-                            opacity: 0.6,
-                            color: '#679aaf'
-                        }
-                    }
-                })
-            );
-        });
     }
 
     function load_line(name) {
@@ -791,6 +762,9 @@ $(window).resize(function () {
                             case 'yellow':
                                 final_style.color = '#f9e300';
                                 break;
+                            case 'metra':
+                                final_style.color = '#679aaf';
+                                break;
                         }
                         return final_style;
                     }
@@ -802,9 +776,6 @@ $(window).resize(function () {
     function show_lines() {
         if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
-        }
-        if ($('#checkbox-metra').is(':checked')) {
-            map.addLayer(metra_layer);
         }
     }
 

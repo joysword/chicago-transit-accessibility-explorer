@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-US" style="height: 100%;">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="This tool shows visualizations of multi-modal accessibility of Chicago metropolitan area">
+        <meta name="author" content="Shi Yin">
+
+        <title>Metropolitan Chicago Accessibility Explorer</title>
+
+		<!-- Bootstrap core CSS -->
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" >
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" >
+
+        <!-- Mapbox core CSS -->
+        <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
+        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
+        <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+
+        <!-- custom css -->
+        <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+
+        <script type='text/javascript'>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+    </head>
+
+    <body style="height: 100%">
+        <!-- Navigation bar -->
+        <div class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand">Metropolitan Chicago Accessibility Explorer</a>
+            </div>
+
+            <div class="collapse navbar-collapse pull-right" id="navbar-collapse-1">
+                {% block navbar %}{% endblock %}
+            </div><!--/.nav-collapse -->
+        </div>
+        <!-- end of Navigation bar -->
+
+        {% block menu %}{% endblock %}
+
+        <!-- main -->
+        {% block main %}{% endblock %}
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <!--<script src="//plenario.datamade.us/static/js/bootstrap.min.js"></script>-->
+
+        <!-- moment.js, spin.js, etc -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
+        <script src="{{ url_for('static', filename='js/jquery.spin.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='js/ejs_production.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='js/jenks.js') }}"></script>
+
+        <!-- underscore.js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+
+        <!-- combineMapbox core JavaScript -->
+        <script src='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.js'></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+
+        <!-- Leaflet Omnivore JavaScript -->
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+
+        <!-- D3 TopoJson JavaScript -->
+        <script src="{{ url_for('static', filename='js/topojson.js') }}"></script>
+
+        <!-- Start of StatCounter Code for Default Guide -->
+        <script type="text/javascript">
+        var sc_project=10364438;
+        var sc_invisible=1;
+        var sc_security="2c46de2a";
+        var scJsHost = (("https:" == document.location.protocol) ?
+        "https://secure." : "http://www.");
+        document.write("<sc"+"ript type='text/javascript' src='" +
+        scJsHost+
+        "statcounter.com/counter/counter.js'></"+"script>");
+        </script>
+        <noscript><div class="statcounter"><a title="click tracking"
+        href="http://statcounter.com/" target="_blank"><img
+        class="statcounter"
+        src="http://c.statcounter.com/10364438/0/2c46de2a/1/"
+        alt="click tracking"></a></div></noscript>
+        <!-- End of StatCounter Code for Default Guide -->
+
+        {% block js %}{% endblock %}
+    </body>
+</html>

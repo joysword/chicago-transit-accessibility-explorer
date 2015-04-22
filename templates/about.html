@@ -1,49 +1,14 @@
-<!DOCTYPE html>
-<html lang="en" style="height: 100%;">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="description" content="">
-        <meta name="author" content="Shi Yin">
+{% extends "layout.html" %}
+{% block navbar %}
+<ul class="nav navbar-nav">
+    <li class=""><a href="{{ url_for('index') }}">Accessibility</a></li>
+    <li class=""><a href="{{ url_for('travel') }}">Travel Time</a></li>
+    <li class=""><a href="{{ url_for('combined') }}">Combined</a></li>
+    <li class="active"><a href="{{ url_for('about') }}">About</a></li>
+</ul>
+{% endblock %}
 
-        <title>Metropolitan Chicago Accessibility Explorer</title>
-
-        <!-- Bootstrap core CSS -->
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" >
-
-        <!-- custom css -->
-        <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
-
-        <script type='text/javascript'>
-            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-        </script>
-    </head>
-
-    <body style="height: 100%">
-        <!-- Navigation bar -->
-        <div class="navbar navbar-default navbar-static-top" role="navigation">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">Metropolitan Chicago Accessibility Explorer</a>
-            </div>
-            <div class="navbar-collapse collapse pull-right">
-                <ul class="nav navbar-nav">
-                    <li class=""><a href="{{ url_for('index') }}">Accessibility</a></li>
-                    <li class=""><a href="{{ url_for('travel') }}">Travel Time</a></li>
-                    <li class=""><a href="{{ url_for('combined') }}">Combined</a></li>
-                    <li class="active"><a href="{{ url_for('about') }}">About</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div>
-        <!-- end of Navigation bar -->
-
-        <!-- main -->
+{% block main %}
             <div class="about">
                 <h2>About</h2>
                 <p>The goal of this project is to develop accessibility metrics for a variety of activities in the Chicago Metropolitan area and to present them using a relatively simple, user friendly, online platform.  We aim to provide a resource that planners and policy makers can readily use to evaluate how well the transportation system is connecting people to activity locations around them.  Using the Accessibility Explorer, questions about how many jobs, or park land, or groceries etc. can be reached by residents of a specific neighborhood in reasonable time by a given mode can be answered quickly. One can evaluate the changes to accessibility over the course of a day as transit systems adjust their schedules to demand.  It allows us to see the spatial equities (and inequities) of access the transportation-land use nexus currently provides and which areas it affects. </p>
@@ -61,5 +26,4 @@
 
                 [This page is under construction.]
             </div>
-    </body>
-</html>
+{% endblock %}

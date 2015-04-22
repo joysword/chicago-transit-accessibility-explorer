@@ -21,8 +21,7 @@ $(window).resize(function () {
     var layer;
     var category_iso;
     var cta_layer = new L.FeatureGroup();
-    var metra_layer = new L.FeatureGroup();
-    var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow"];
+    var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow", "metra"];
 
     var val = [];
 
@@ -305,17 +304,6 @@ $(window).resize(function () {
         }
     });
 
-    $('#checkbox-metra').change(function(){
-        if ($('#checkbox-metra').is(':checked')) {
-            map.addLayer(metra_layer);
-            map2.addLayer(metra_layer);
-        }
-        else {
-            map.removeLayer(metra_layer);
-            map2.removeLayer(metra_layer);
-        }
-    });
-
     $('#btn-submit').on('click', show_map);
     $('#btn-submit').on('click', show_map2);
 
@@ -574,9 +562,6 @@ $(window).resize(function () {
         if ($('#checkbox-cta').is(':checked')) {
             cta_layer.bringToFront();
         }
-        if ($('#checkbox-metra').is(':checked')) {
-            metra_layer.bringToFront();
-        }
 
         //map.fitBounds(acc_layer.getBounds());
 
@@ -642,8 +627,7 @@ $(window).resize(function () {
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
-                            var content ='id: ' + feature.properties.num;
-                            content +='<br>GEOID10: ' + feature.properties.GEOID10;
+                            var content ='GEOID10: ' + feature.properties.GEOID10;
                             layer.bindLabel(content);
                             layer.on('click', clickHandler_metro);
                             which_feature++;
@@ -661,8 +645,7 @@ $(window).resize(function () {
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
-                            var content ='id: ' + feature.properties.num;
-                            content +='<br>GEOID10: ' + feature.properties.GEOID10;
+                            var content ='GEOID10: ' + feature.properties.GEOID10;
                             layer.bindLabel(content);
                             layer.on('click', clickHandler_chicago);
                             which_feature++;
@@ -700,9 +683,6 @@ $(window).resize(function () {
                 if ($('#checkbox-cta').is(':checked')) {
                     cta_layer.bringToFront();
                 }
-                if ($('#checkbox-metra').is(':checked')) {
-                    metra_layer.bringToFront();
-                }
 
                 //map.fitBounds(acc_layer.getBounds());
 
@@ -716,23 +696,24 @@ $(window).resize(function () {
     function clickHandler_chicago(e){
         console.log('in clickHandler_chicago()');
         cur_num_chicago = e.target.feature.properties.num;
+        e.target._hideLabel();
         console.log('clicked feature id:', cur_num_chicago);
-        select_bg(cur_num_chicago, true);
+        select_bg(cur_num_chicago, true, e);
     }
 
     function clickHandler_metro(e){
         console.log('in clickHandler_metro()');
         cur_num_metro = e.target.feature.properties.num;
+        e.target._hideLabel();
         console.log('clicked feature id:', cur_num_metro);
-        select_bg(cur_num_metro, false);
+        select_bg(cur_num_metro, false, e);
     }
 
-    function select_bg(num, isChicago){
+    function select_bg(num, isChicago, e){
 
         console.log('in select_bg()');
 
-        bg = num;
-        console.log('bg:', bg);
+        console.log('bg:', num);
 
         var file_prefix = "/static/json/iso_"
         var travel_type = $('#select-type').val();
@@ -745,14 +726,14 @@ $(window).resize(function () {
             $.getJSON($SCRIPT_ROOT + file_prefix + "chicago_" + travel_type + "/" + num + '.json', function(data){
                 $.each(chicago_layer_2._layers, function(i, bg){
                     var num = bg.feature.properties.num;
-                    //console.log('num:', num);
-
+                    var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
                     if (_.has(data, num))
                     {
                         bg.setStyle({
                             fill: true,
                             fillColor: get_iso_color(data[num]),
                         });
+                        content += '<br>Travel Time: ' + toTime(data[num]);
                     }
                     else
                     {
@@ -761,21 +742,25 @@ $(window).resize(function () {
                             stroke: false
                         });
                     }
+                    bg.bindLabel(content);
                 });
+                if (typeof e !== 'undefined') {
+                    e.target._showLabel(e);
+                }
             });
         }
         else {
             $.getJSON($SCRIPT_ROOT + file_prefix + "large_" + travel_type + "/" + num + '.json', function(data){
                 $.each(metro_layer_2._layers, function(i, bg){
                     var num = bg.feature.properties.num;
-                    //console.log('num:', num);
-
+                    var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
                     if (_.has(data, num))
                     {
                         bg.setStyle({
                             fill: true,
                             fillColor: get_iso_color(data[num]),
                         });
+                        content += '<br>Travel Time: ' + toTime(data[num]);
                     }
                     else
                     {
@@ -784,9 +769,22 @@ $(window).resize(function () {
                             stroke: false
                         });
                     }
+                    bg.bindLabel(content);
                 });
+                if (typeof e !== 'undefined') {
+                    e.target._showLabel(e);
+                }
             });
         }
+    }
+
+    function toTime(tot) {
+        var sec = tot;
+        var hour = ('00'+Math.floor(sec/3600)).slice(-2)+":";
+        sec = sec%3600;
+        var min = ('00'+Math.floor(sec/60)).slice(-2)+":";
+        sec = ('00'+(sec%60)).slice(-2);
+        return hour+min+sec;
     }
 
     var map_colors1 = [
@@ -931,19 +929,6 @@ $(window).resize(function () {
         for (var i in cta_line_names) {
             load_line(cta_line_names[i]);
         }
-        $.getJSON($SCRIPT_ROOT + "/static/json/metra.json", function(data) {
-            metra_layer.addLayer(
-                L.geoJson(data.features, {
-                    style: function(feature) {
-                        return {
-                            weight: 3,
-                            opacity: 0.6,
-                            color: '#679aaf'
-                        }
-                    }
-                })
-            );
-        });
     }
 
     function load_line(name) {
@@ -980,6 +965,9 @@ $(window).resize(function () {
                             case 'yellow':
                                 final_style.color = '#f9e300';
                                 break;
+                            case 'metra':
+                                final_style.color = '#679aaf';
+                                break;
                         }
                         return final_style;
                     }
@@ -992,10 +980,6 @@ $(window).resize(function () {
         if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
             map2.addLayer(cta_layer);
-        }
-        if ($('#checkbox-metra').is(':checked')) {
-            map.addLayer(metra_layer);
-            map2.addLayer(metra_layer);
         }
     }
 
