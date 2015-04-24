@@ -99,7 +99,6 @@ $(window).resize(function () {
 
     L.control.scale({position: 'bottomright'}).addTo(map2);
 
-    L.control.zoom({position: 'topright'}).addTo(map);
     L.control.zoom({position: 'topright'}).addTo(map2);
 
     map.on('drag', function(e) {
