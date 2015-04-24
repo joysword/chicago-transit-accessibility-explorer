@@ -45,7 +45,7 @@ $(window).resize(function () {
     load_lines();
     show_lines();
 
-    var legend_iso = L.control({position: 'topright'});
+    var legend_iso = L.control({position: 'bottomleft'});
     legend_iso.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'legend');
         var labels = [];

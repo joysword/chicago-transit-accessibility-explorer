@@ -90,7 +90,7 @@ $(window).resize(function () {
     load_lines();
     show_lines();
 
-    var legend = L.control({position: 'topright'});
+    var legend = L.control({position: 'bottomleft'});
     legend.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'legend');
         var labels = [];
