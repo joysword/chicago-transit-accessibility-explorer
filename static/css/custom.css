@@ -281,7 +281,7 @@ body {
 }
 .navbar-static-top {
   margin-bottom: 0px;
-  min-height: 75px;
+  height: 75px;
 }
 .navbar-brand {
   font-size: 18px;

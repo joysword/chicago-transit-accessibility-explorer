@@ -1,6 +1,6 @@
 $(window).resize(function () {
     var h = $(window).height(),
-      offsetTop = 50; // Calculate the top offset
+      offsetTop = 75; // Calculate the top offset
 
     $('#map').css('height', (h - offsetTop));
     $('#map2').css('height', (h - offsetTop));
