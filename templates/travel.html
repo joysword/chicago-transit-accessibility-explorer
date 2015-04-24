@@ -10,93 +10,91 @@
 
 {% block menu %}
 <div id="menu" class="well">
-    <div class="row">
-        <div class="col-md-12">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <div class="form-inline">
-                        <div id="form-layer">
-                            <label for="select-layer">Which layer: </label>
-                            <select id="select-layer" class="form-control">
-                                <option value="metro" selected>Metropolitan</option>
-                                <option value="chicago">Chicago only</option>
-                            </select>
-                        </div><!--/#form-layer-->
-                    </div><!--/.form-group-->
-                </li>
-                <li class="dropbown">
-                    <div class="form-inline">
-                        <div id="form-type">
-                            <label for="select-type">Travel Mode: </label>
-                            <select id="select-type" class="form-control">
-                                <option value="driving" selected>Driving</option>
-                                <option value="transit">Transit</option>
-                                <option value="bicycle">Bicycle</option>
-                                <option value="walking"> Walking</option>
-                            </select>
-                        </div><!--/#form-type-->
-                    </div><!--/.form-group-->
-                </li>
-                <li class="dropdown">
-                    <div class="form-inline">
-                        <div id="form-time" class="no-disp">
-                            <label for="select-time">Departure Time: </label>
-                            <select id="select-time" class="form-control">
-                                <option value="0">midnight</option>
-                                <option value="1">1 am</option>
-                                <option value="2">2 am</option>
-                                <option value="3">3 am</option>
-                                <option value="4">4 am</option>
-                                <option value="5">5 am</option>
-                                <option value="6">6 am</option>
-                                <option value="7">7 am</option>
-                                <option value="8" selected>8 am</option>
-                                <option value="9">9 am</option>
-                                <option value="10">10 am</option>
-                                <option value="11">11 am</option>
-                                <option value="12">noon</option>
-                                <option value="13">1 pm</option>
-                                <option value="14">2 pm</option>
-                                <option value="15">3 pm</option>
-                                <option value="16">4 pm</option>
-                                <option value="17">5 pm</option>
-                                <option value="18">6 pm</option>
-                                <option value="19">7 pm</option>
-                                <option value="20">8 pm</option>
-                                <option value="21">9 pm</option>
-                                <option value="22">10 pm</option>
-                                <option value="23">11 pm</option>
-                            </select>
-                        </div><!--/#form-time-->
-                    </div><!--/.form-group-->
-                </li>
-                <li class="dropdown">
-                </li>
-                <li class="form-inline">
-                    <div id="form-lines">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value="" id="checkbox-cta">
-                                show CTA and Metra lines
-                            </label>
-                        </div>
-                        <!-- <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value="" id="checkbox-metra">
-                                show Metra lines
-                            </label>
-                        </div> -->
-                        <!-- <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value="" id="checkbox-highway">
-                                show major highways
-                            </label>
-                        </div> -->
-                        <button id="btn-submit" class="btn btn-primary" type="button"><i class="fa fa-search"></i>  Show Map</button>
-                    </div><!--/#form-lines-->
-                </li>
-            </ul>
-        </div>
+    <div class="col-md-12">
+        <ul class="nav navbar-nav">
+            <li id="li-lay" class="dropdown">
+                <div class="form-group">
+                    <div id="form-layer">
+                        <label for="select-layer">Which layer: </label>
+                        <select id="select-layer" class="form-control">
+                            <option value="metro" selected>Metropolitan</option>
+                            <option value="chicago">Chicago only</option>
+                        </select>
+                    </div><!--/#form-layer-->
+                </div><!--/.form-group-->
+            </li>
+            <li class="dropbown">
+                <div class="form-group">
+                    <div id="form-type">
+                        <label for="select-type">Travel Mode: </label>
+                        <select id="select-type" class="form-control">
+                            <option value="driving" selected>Driving</option>
+                            <option value="transit">Transit</option>
+                            <option value="bicycle">Bicycle</option>
+                            <option value="walking"> Walking</option>
+                        </select>
+                    </div><!--/#form-type-->
+                </div><!--/.form-group-->
+            </li>
+            <li class="dropdown">
+                <div class="form-group">
+                    <div id="form-time" class="no-disp">
+                        <label for="select-time">Departure Time: </label>
+                        <select id="select-time" class="form-control">
+                            <option value="0">midnight</option>
+                            <option value="1">1 am</option>
+                            <option value="2">2 am</option>
+                            <option value="3">3 am</option>
+                            <option value="4">4 am</option>
+                            <option value="5">5 am</option>
+                            <option value="6">6 am</option>
+                            <option value="7">7 am</option>
+                            <option value="8" selected>8 am</option>
+                            <option value="9">9 am</option>
+                            <option value="10">10 am</option>
+                            <option value="11">11 am</option>
+                            <option value="12">noon</option>
+                            <option value="13">1 pm</option>
+                            <option value="14">2 pm</option>
+                            <option value="15">3 pm</option>
+                            <option value="16">4 pm</option>
+                            <option value="17">5 pm</option>
+                            <option value="18">6 pm</option>
+                            <option value="19">7 pm</option>
+                            <option value="20">8 pm</option>
+                            <option value="21">9 pm</option>
+                            <option value="22">10 pm</option>
+                            <option value="23">11 pm</option>
+                        </select>
+                    </div><!--/#form-time-->
+                </div><!--/.form-group-->
+            </li>
+            <li class="dropdown">
+            </li>
+            <li class="form-group">
+                <div id="form-lines">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="" id="checkbox-cta">
+                            show CTA and Metra lines
+                        </label>
+                    </div>
+                    <!-- <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="" id="checkbox-metra">
+                            show Metra lines
+                        </label>
+                    </div> -->
+                    <!-- <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="" id="checkbox-highway">
+                            show major highways
+                        </label>
+                    </div> -->
+                    <button id="btn-submit" class="btn btn-primary btn-sm pull-right" type="button"><i class="glyphicon glyphicon-search"></i>  Show Map</button>
+                </div><!--/#form-lines-->
+            </li>
+        </ul>
     </div>
 </div>
 {% endblock %}

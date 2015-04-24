@@ -233,11 +233,21 @@ body {
 #menu {
   position: absolute;
   z-index: 10000;
-  left: 5px;
-  top: 55px;
+  left: 0px;
+  top: 50px;
 }
 #menu.well {
-  padding: 15px 15px 0 15px;
+  padding: 10px 0 15px;
+  background-color: #;
+}
+#menu label {
+  font-size: 14px;
+}
+#menu .dropdown label {
+  font-family: 'Open Sans', sans-serif;
+}
+#menu .form-group {
+  margin: 0;
 }
 #menu li {
   margin: 0 15px 0 0;
@@ -247,7 +257,27 @@ body {
 }
 #menu label {
   margin: 0 10px 0 0;
-  vertical-align: middle;
+}
+#li-acc {
+  width: 143px;
+}
+#li-tra {
+  width: 116px;
+}
+#li-dep {
+  max-width: 141px;
+}
+#li-thr {
+  width: 151px;
+}
+#li-fil {
+  width: 120px;
+}
+#li-cat {
+  max-width: 200px;
+}
+#li-lay {
+  width:;
 }
 .navbar {
   margin-bottom: 0px;
