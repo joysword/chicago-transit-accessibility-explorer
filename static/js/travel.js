@@ -298,7 +298,8 @@ $(window).resize(function () {
         sec = sec%3600;
         var min = ('00'+Math.floor(sec/60)).slice(-2)+":";
         sec = ('00'+(sec%60)).slice(-2);
-        return hour+min+sec;
+        //return hour+min+sec;
+        return (hour*60+min) + ' min';
     }
 
     function get_color(d) {
