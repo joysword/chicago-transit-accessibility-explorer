@@ -234,7 +234,7 @@ body {
   position: absolute;
   z-index: 10000;
   left: 0px;
-  top: 75px;
+  top: 50px;
 }
 #menu.well {
   padding: 10px 0 15px;
@@ -279,24 +279,8 @@ body {
 #li-lay {
   width:;
 }
-.navbar-static-top {
+.navbar {
   margin-bottom: 0px;
-  height: 75px;
-}
-.navbar-brand {
-  font-size: 18px;
-  line-height: 1.4em;
-}
-.navbar-static-top li {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    line-height: 75px;
-}
-@media (max-width: 767px) {
-    .navbar-static-top li {
-    line-height: 20px;
-    margin-top: 10px;
-    margin-bottom: 10px;}
 }
 body {
   padding-bottom: 0px;
@@ -305,7 +289,7 @@ body {
 
 .about {
   width: 45em;
-  margin: 30px auto 50px;
+  margin: 60px auto;
   padding: 30px;
   border: 1px;
   border-style: solid;
