@@ -292,14 +292,8 @@ $(window).resize(function () {
         }
     }
 
-    function toTime(tot) {
-        var sec = tot;
-        var hour = ('00'+Math.floor(sec/3600)).slice(-2)+":";
-        sec = sec%3600;
-        var min = ('00'+Math.floor(sec/60)).slice(-2)+":";
-        sec = ('00'+(sec%60)).slice(-2);
-        //return hour+min+sec;
-        return (hour*60+min) + ' min';
+    function toTime(sec) {
+        return Math.floor(sec/60) + ' min';
     }
 
     function get_color(d) {
