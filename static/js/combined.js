@@ -89,12 +89,10 @@ $(window).resize(function () {
     var map = L.map('map', {center: [41.8910,-87.8839], zoom: 10, minZoom: 8, zoomControl: false, attributionControl: false});
     var map2 = L.map('map2', {center: [41.8910,-87.8839], zoom: 10, minZoom: 8, zoomControl: false});
 
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
-        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a>"
-    }).addTo(map);
+    L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png').addTo(map);
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
-        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a>"
+        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://utc.webhost.uic.edu/metsi/' target='_blank'>&copy; Metropolitan Transportation Support Initiative<a/>"
     }).addTo(map2);
 
     L.control.scale({position: 'bottomright'}).addTo(map2);
