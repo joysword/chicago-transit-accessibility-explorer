@@ -9,7 +9,7 @@
         <title>Metropolitan Chicago Accessibility Explorer</title>
 
 		<!-- Bootstrap core CSS -->
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" >
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" >
 
         <!-- Mapbox core CSS -->
         <link href='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.css' rel='stylesheet' />
@@ -51,21 +51,19 @@
         {% block main %}{% endblock %}
 
         <!-- Bootstrap core JavaScript -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <!--<script src="//plenario.datamade.us/static/js/bootstrap.min.js"></script>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
         <!-- moment.js, spin.js, etc -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
         <script src="{{ url_for('static', filename='js/jquery.spin.js') }}"></script>
-        <!--<script src="{{ url_for('static', filename='js/ejs_production.js') }}"></script>-->
         <script src="{{ url_for('static', filename='js/jenks.js') }}"></script>
 
         <!-- underscore.js -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.7.0/lodash.min.js"></script>
 
-        <!-- combineMapbox core JavaScript -->
+        <!-- Mapbox core JavaScript -->
         <script src='https://api.tiles.mapbox.com/mapbox.js/v2.0.0/mapbox.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
