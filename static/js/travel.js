@@ -431,7 +431,7 @@ $(window).resize(function () {
             weight: 1,
             color: '#fff',
             fillColor: '#7c7dbb',
-            fillOpacity: 0.5,
+            fillOpacity: 0.5
         }
     }
 
