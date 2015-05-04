@@ -5,6 +5,58 @@ $(window).resize(function () {
     $('#map').css('height', (h - offsetTop));
 }).resize();
 
+var map_colors = [
+    '#f7fcf5',
+    '#e5f5e0',
+    '#c7e9c0',
+    '#a1d99b',
+    '#74c476',
+    '#41ab5d',
+    '#238b45',
+    '#005a32'
+];
+
+var cutoffs = [0,1,5,10,15,20,30,40]
+
+function get_color_fixed(d) {
+    if (d > cutoffs[3]) {
+        if (d > cutoffs[5]) {
+            if (d > cutoffs[6]) {
+                return map_colors[7];
+            }
+            else {
+                return map_colors[6];
+            }
+        }
+        else {
+            if (d > cutoffs[4]) {
+                return map_colors[5];
+            }
+            else {
+                return map_colors[4];
+            }
+        }
+    }
+    else {
+        if (d > cutoffs[1]) {
+            if (d > cutoffs[2]) {
+                return map_colors[3];
+            }
+            else {
+                return map_colors[2];
+            }
+        }
+        else {
+            if (d > cutoffs[0]) {
+                return map_colors[1];
+            }
+            else {
+                return map_colors[0];
+            }
+        }
+    }
+}
+
 (function(){
     //var cached_layers = {};
     var cached_json = {};
@@ -96,15 +148,17 @@ $(window).resize(function () {
         var labels = [];
         var low;
         var high;
-        $.each(cached_jenks[cache_index], function(i, v) {
+        $.each(cutoffs, function(i, v) {
             low = v;
-            high = cached_jenks[cache_index][i+1];
-            labels.push('<i style="background:' + get_color(low) + '"></i>' +
-                low.toFixed(2) + '%' + (high ? '&ndash;' + high.toFixed(2) + '%': '+'));
+            high = cutoffs[i+1];
+            labels.push('<i style="background:' + get_color_fixed(low) + '"></i>' +
+                low + '%' + (high ? '&ndash;' + high + '%': '+'));
         });
         div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
         return div;
     }
+
+    legend.addTo(map);
 
     var drawnItems = L.featureGroup().addTo(map);
 
@@ -180,7 +234,7 @@ $(window).resize(function () {
         if (map.getZoom() <= 10) {
             console.log('<=10');
             my_layer.setStyle(function(feature) {
-                var new_color = get_color(100*cached_json[cache_index][feature.properties.num]);
+                var new_color = get_color_fixed(100*cached_json[cache_index][feature.properties.num]);
                 return {
                     color: new_color,
                     opacity: 0.4,
@@ -192,7 +246,7 @@ $(window).resize(function () {
         else {
             console.log('>10');
             my_layer.setStyle(function(feature) {
-                var new_color = get_color(100*cached_json[cache_index][feature.properties.num]);
+                var new_color = get_color_fixed(100*cached_json[cache_index][feature.properties.num]);
                 return {
                     color: '#fff',
                     weight: 1,
@@ -548,9 +602,9 @@ $(window).resize(function () {
         $('#map').spin(false);
 
         // block 3
-        try {
-            legend.removeFrom(map);
-        } catch(e) {};
+        // try {
+        //     legend.removeFrom(map);
+        // } catch(e) {};
         //acc_layer.clearLayers();
         // if (acc_layer != undefined) {
         //     map.removeLayer(acc_layer);
@@ -570,7 +624,7 @@ $(window).resize(function () {
         }
         //acc_layer.addLayer(my_layer).addTo(map);
 
-        legend.addTo(map);
+        //legend.addTo(map);
 
         // bing up CTA/Metra layers to top
         if ($('#checkbox-cta').is(':checked')) {
@@ -585,27 +639,6 @@ $(window).resize(function () {
         console.log(time_done - time_2_3);
         // end block 3
     }
-
-    var map_colors1 = [
-        '#deebf7',
-        '#c6dbef',
-        '#9ecae1',
-        '#6baed6',
-        '#4292c6',
-        '#2171b5',
-        '#084594'
-    ]
-
-    var map_colors = [
-        '#f7fcf5',
-        '#e5f5e0',
-        '#c7e9c0',
-        '#a1d99b',
-        '#74c476',
-        '#41ab5d',
-        '#238b45',
-        '#005a32'
-    ]
 
     function get_color(d) {
         if (d > cached_jenks[cache_index][3]) {
@@ -694,7 +727,7 @@ $(window).resize(function () {
     }
 
     function acc_style(num) {
-        var color = get_color(100*num);
+        var color = get_color_fixed(100*num);
         if (map.getZoom()<=10) {
             return {
                 fillColor: color,
