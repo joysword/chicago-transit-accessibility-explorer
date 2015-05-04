@@ -92,7 +92,7 @@ $(window).resize(function () {
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png').addTo(map);
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
-        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://utc.webhost.uic.edu/metsi/' target='_blank'>&copy; Metropolitan Transportation Support Initiative<a/>"
+        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://ntilahun.com' target='_blank'>&copy; The Urban Transporation & Behavior Research Group, UIC<a/>"
     }).addTo(map2);
 
     L.control.scale({position: 'bottomright'}).addTo(map2);
