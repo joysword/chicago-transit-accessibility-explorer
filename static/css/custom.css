@@ -270,7 +270,7 @@ body {
   width: 164px;
 }
 #li-fil {
-  width: 120px;
+  max-width: 120px;
 }
 #li-cat {
   max-width: 200px;
