@@ -238,7 +238,6 @@ body {
 }
 #menu.well {
   padding: 10px 0 15px;
-  background-color: #;
 }
 #menu label {
   font-size: 14px;
@@ -274,7 +273,7 @@ body {
   width: 120px;
 }
 #li-cat {
-  width: 200px;
+  max-width: 200px;
 }
 .navbar {
   margin-bottom: 0px;
