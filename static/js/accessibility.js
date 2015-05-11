@@ -69,6 +69,7 @@ function get_color_fixed(d) {
     var has_chicago_layer = false;
     var jenks_cutoffs;
     var cta_layer = new L.FeatureGroup();
+    var community_layer = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow", "metra"];
 
     var val = [];
@@ -141,6 +142,8 @@ function get_color_fixed(d) {
 
     load_lines();
     show_lines();
+    load_community();
+    show_community();
 
     var legend = L.control({position: 'bottomleft'});
     legend.onAdd = function(map) {
@@ -369,6 +372,15 @@ function get_color_fixed(d) {
         }
         else {
             map.removeLayer(cta_layer);
+        }
+    });
+
+    $('#checkbox-community').change(function(){
+        if ($('#checkbox-community').is(':checked')) {
+            map.addLayer(community_layer);
+        }
+        else {
+            map.removeLayer(community_layer);
         }
     });
 
@@ -626,9 +638,14 @@ function get_color_fixed(d) {
 
         //legend.addTo(map);
 
-        // bing up CTA/Metra layers to top
+        // bing up CTA/Metra layers to back
         if ($('#checkbox-cta').is(':checked')) {
-            cta_layer.bringToFront();
+            cta_layer.bringToBack();
+        }
+
+        // bing up community are layer to back
+        if ($('#checkbox-cta').is(':checked')) {
+            community_layer.bringToBakc();
         }
 
         //map.fitBounds(acc_layer.getBounds());
@@ -748,13 +765,6 @@ function get_color_fixed(d) {
         }
     }
 
-
-    function acc_filter(feature, layer) {
-        return feature.properties.GEOID10 == '170979900000' ? false :
-            feature.properties.GEOID10 == '170319900000' ? false :
-            true;
-    }
-
     function load_lines() {
         for (var i in cta_line_names) {
             load_line(cta_line_names[i]);
@@ -809,6 +819,27 @@ function get_color_fixed(d) {
     function show_lines() {
         if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
+        }
+    }
+
+    function load_community() {
+        $.getJSON($SCRIPT_ROOT + "/static/json/community.json", function(data) {
+            community_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+        });
+    }
+
+    function show_community() {
+        if ($('#checkbox-community').is(':checked')) {
+            map.addLayer(community_layer);
         }
     }
 
