@@ -393,7 +393,7 @@ $(window).resize(function () {
                 console.log('no chicago layer, downloading');
                 var which_feature = 0;
                 $.getJSON($SCRIPT_ROOT + '/static/json/chicago.topojson', function(data) {
-                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
+                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010_clip']), {
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
                             which_feature++;
@@ -422,7 +422,7 @@ $(window).resize(function () {
                 console.log('no metropolitan layer, downloading');
                 var which_feature = 0;
                 $.getJSON($SCRIPT_ROOT + '/static/json/metro.topojson', function(data) {
-                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
+                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83_clip']), {
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
                             which_feature++;
@@ -619,7 +619,7 @@ $(window).resize(function () {
                 // block 2
                 if (layer == 'metro') {
                     var which_feature = 0;
-                    metro_layer_2 = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
+                    metro_layer_2 = L.geoJson(topojson.feature(data, data.objects['metro_nad83_clip']), {
                         style: empty_style,
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
@@ -637,7 +637,7 @@ $(window).resize(function () {
                 else {
                     var which_feature = 0;
                     // cached_layers[cache_index] = L.geoJson(my_data.features, {
-                    chicago_layer_2 = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
+                    chicago_layer_2 = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010_clip']), {
                         style: empty_style,
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {

@@ -475,7 +475,7 @@ function get_color_fixed(d) {
                 console.log('no chicago layer, downloading');
                 var which_feature = 0;
                 $.getJSON($SCRIPT_ROOT + '/static/json/chicago.topojson', function(data) {
-                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010']), {
+                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010_clip']), {
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
                             which_feature++;
@@ -504,7 +504,7 @@ function get_color_fixed(d) {
                 console.log('no metropolitan layer, downloading');
                 var which_feature = 0;
                 $.getJSON($SCRIPT_ROOT + '/static/json/metro.topojson', function(data) {
-                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83']), {
+                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83_clip']), {
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
                             which_feature++;
