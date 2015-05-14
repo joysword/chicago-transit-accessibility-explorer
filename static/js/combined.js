@@ -555,6 +555,11 @@ $(window).resize(function () {
 
         legend.addTo(map);
 
+        // bing up community are layer to back
+        if ($('#checkbox-community').is(':checked')) {
+            community_layer.bringToFront();
+        }
+
         // bing up CTA/Metra layers to top
         if ($('#checkbox-cta').is(':checked')) {
             cta_layer.bringToFront();

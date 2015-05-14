@@ -638,14 +638,14 @@ function get_color_fixed(d) {
 
         //legend.addTo(map);
 
-        // bing up CTA/Metra layers to back
-        if ($('#checkbox-cta').is(':checked')) {
-            cta_layer.bringToBack();
+        // bing up community are layer to back
+        if ($('#checkbox-community').is(':checked')) {
+            community_layer.bringToFront();
         }
 
-        // bing up community are layer to back
+        // bing up CTA/Metra layers to back
         if ($('#checkbox-cta').is(':checked')) {
-            community_layer.bringToBakc();
+            cta_layer.bringToFront();
         }
 
         //map.fitBounds(acc_layer.getBounds());
