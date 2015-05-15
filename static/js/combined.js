@@ -6,6 +6,58 @@ $(window).resize(function () {
     $('#map2').css('height', (h - offsetTop));
 }).resize();
 
+var map_colors = [
+    '#f7fcf5',
+    '#e5f5e0',
+    '#c7e9c0',
+    '#a1d99b',
+    '#74c476',
+    '#41ab5d',
+    '#238b45',
+    '#005a32'
+]
+
+var cutoffs = [0,1,5,10,15,20,30,40]
+
+function get_color_fixed(d) {
+    if (d > cutoffs[3]) {
+        if (d > cutoffs[5]) {
+            if (d > cutoffs[6]) {
+                return map_colors[7];
+            }
+            else {
+                return map_colors[6];
+            }
+        }
+        else {
+            if (d > cutoffs[4]) {
+                return map_colors[5];
+            }
+            else {
+                return map_colors[4];
+            }
+        }
+    }
+    else {
+        if (d > cutoffs[1]) {
+            if (d > cutoffs[2]) {
+                return map_colors[3];
+            }
+            else {
+                return map_colors[2];
+            }
+        }
+        else {
+            if (d > cutoffs[0]) {
+                return map_colors[1];
+            }
+            else {
+                return map_colors[0];
+            }
+        }
+    }
+}
+
 (function(){
     //var cached_layers = {};
     var cached_json = {};
@@ -21,6 +73,9 @@ $(window).resize(function () {
     var layer;
     var category_iso;
     var cta_layer = new L.FeatureGroup();
+    var cta_layer2 = new L.FeatureGroup();
+    var community_layer = new L.FeatureGroup();
+    var community_layer2 = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow", "metra"];
 
     var val = [];
@@ -148,9 +203,11 @@ $(window).resize(function () {
 
     load_lines();
     show_lines();
+    load_community();
+    show_community();
 
-    var legend = L.control({position: 'bottomleft'});
-    legend.onAdd = function(map) {
+    var legend_jenks = L.control({position: 'bottomleft'});
+    legend_jenks.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'legend');
         var labels = [];
         var low;
@@ -160,6 +217,22 @@ $(window).resize(function () {
             high = cached_jenks[cache_index][i+1];
             labels.push('<i style="background:' + get_color(low) + '"></i>' +
                 low.toFixed(2) + '%' + (high ? '&ndash;' + high.toFixed(2) + '%': '+'));
+        });
+        div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
+        return div;
+    }
+
+    var legend_fixed = L.control({position: 'bottomleft'});
+    legend_fixed.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'legend');
+        var labels = [];
+        var low;
+        var high;
+        $.each(cutoffs, function(i, v) {
+            low = v;
+            high = cutoffs[i+1];
+            labels.push('<i style="background:' + get_color_fixed(low) + '"></i>' +
+                low + '%' + (high ? '&ndash;' + high + '%': '+'));
         });
         div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
         return div;
@@ -290,14 +363,51 @@ $(window).resize(function () {
         }
     });
 
+    $('#select-scale').change(function(){
+        if (!has_chicago_layer && !has_metro_layer)
+            return;
+        try {
+            legend_fixed.removeFrom(map);
+        } catch(e) {};
+        try {
+            legend_jenks.removeFrom(map);
+        } catch(e) {};
+        var data = cached_json[cache_index];
+        if (this.value == 'jenks') {
+            for (var i in my_layer._layers) {
+                var bg = my_layer._layers[i];
+                bg.setStyle(acc_style(data[bg.feature.properties.num]));
+            }
+            legend_jenks.addTo(map);
+        }
+        else {
+            for (var i in my_layer._layers) {
+                var bg = my_layer._layers[i];
+                bg.setStyle(fix_style(data[bg.feature.properties.num]));
+            }
+            legend_fixed.addTo(map);
+        }
+    })
+
     $('#checkbox-cta').change(function(){
         if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
-            map2.addLayer(cta_layer);
+            map2.addLayer(cta_layer2);
         }
         else {
             map.removeLayer(cta_layer);
-            map2.removeLayer(cta_layer);
+            map2.removeLayer(cta_layer2);
+        }
+    });
+
+    $('#checkbox-community').change(function(){
+        if ($('#checkbox-community').is(':checked')) {
+            map.addLayer(community_layer);
+            map2.addLayer(community_layer2);
+        }
+        else {
+            map.removeLayer(community_layer);
+            map2.removeLayer(community_layer2);
         }
     });
 
@@ -494,32 +604,61 @@ $(window).resize(function () {
 
         var data = cached_json[cache_index];
 
-        for (var i in my_layer._layers) {
-        //my_layer.eachLayer(function(bg){
-            var bg = my_layer._layers[i];
-            var num = bg.feature.properties.num;
-            var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
-            if (landuse=="job") {
-                if (_.has(data, num)) {
-                    bg.setStyle(acc_style(data[num]));
-                    content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+        if ($('#select-scale').val() == 'jenks') {
+            for (var i in my_layer._layers) {
+                var bg = my_layer._layers[i];
+                var num = bg.feature.properties.num;
+                var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                if (landuse=="job") {
+                    if (_.has(data, num)) {
+                        bg.setStyle(acc_style(data[num]));
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                    }
+                    else {
+                        bg.setStyle(acc_style(0));
+                        content += '<br>Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                    }
                 }
                 else {
-                    bg.setStyle(acc_style(0));
-                    content += '<br>Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                    if (_.has(data, num)) {
+                        bg.setStyle(acc_style(data[num]));
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                    }
+                    else {
+                        bg.setStyle(acc_style(0));
+                        content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                    }
                 }
+                bg.bindLabel(content);
             }
-            else {
-                if (_.has(data, num)) {
-                    bg.setStyle(acc_style(data[num]));
-                    content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+        }
+        else {
+            for (var i in my_layer._layers) {
+                var bg = my_layer._layers[i];
+                var num = bg.feature.properties.num;
+                var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                if (landuse=="job") {
+                    if (_.has(data, num)) {
+                        bg.setStyle(fix_style(data[num]));
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                    }
+                    else {
+                        bg.setStyle(fix_style(0));
+                        content += '<br>Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                    }
                 }
                 else {
-                    bg.setStyle(acc_style(0));
-                    content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                    if (_.has(data, num)) {
+                        bg.setStyle(fix_style(data[num]));
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                    }
+                    else {
+                        bg.setStyle(fix_style(0));
+                        content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                    }
                 }
+                bg.bindLabel(content);
             }
-            bg.bindLabel(content);
         }
 
         console.log('calculation done');
@@ -532,7 +671,10 @@ $(window).resize(function () {
 
         // block 3
         try {
-            legend.removeFrom(map);
+            legend_jenks.removeFrom(map);
+        } catch(e) {};
+        try {
+            legend_fixed.removeFrom(map);
         } catch(e) {};
         //acc_layer.clearLayers();
         // if (acc_layer != undefined) {
@@ -553,16 +695,23 @@ $(window).resize(function () {
         }
         //acc_layer.addLayer(my_layer).addTo(map);
 
-        legend.addTo(map);
+        if ($('#select-scale').val() == 'jenks') {
+            legend_jenks.addTo(map);
+        }
+        else {
+            legend_fixed.addTo(map);
+        }
 
         // bing up community are layer to back
         if ($('#checkbox-community').is(':checked')) {
             community_layer.bringToFront();
+            community_layer2.bringToFront();
         }
 
         // bing up CTA/Metra layers to top
         if ($('#checkbox-cta').is(':checked')) {
             cta_layer.bringToFront();
+            cta_layer2.bringToFront();
         }
 
         //map.fitBounds(acc_layer.getBounds());
@@ -681,9 +830,16 @@ $(window).resize(function () {
                     }
                 }
 
+                // bing up community are layer to back
+                if ($('#checkbox-community').is(':checked')) {
+                    community_layer.bringToFront();
+                    community_layer2.bringToFront();
+                }
+
                 // bing up CTA/Metra layers to top
                 if ($('#checkbox-cta').is(':checked')) {
                     cta_layer.bringToFront();
+                    cta_layer2.bringToFront();
                 }
 
                 //map.fitBounds(acc_layer.getBounds());
@@ -783,27 +939,6 @@ $(window).resize(function () {
     function toTime(sec) {
         return Math.floor(sec/60) + ' min';
     }
-
-    var map_colors1 = [
-        '#deebf7',
-        '#c6dbef',
-        '#9ecae1',
-        '#6baed6',
-        '#4292c6',
-        '#2171b5',
-        '#084594'
-    ]
-
-    var map_colors = [
-        '#f7fcf5',
-        '#e5f5e0',
-        '#c7e9c0',
-        '#a1d99b',
-        '#74c476',
-        '#41ab5d',
-        '#238b45',
-        '#005a32'
-    ]
 
     function get_color(d) {
         if (d > cached_jenks[cache_index][3]) {
@@ -913,6 +1048,28 @@ $(window).resize(function () {
         }
     }
 
+    function fix_style(num) {
+        var color = get_color_fixed(100*num);
+        if (map.getZoom()<=10) {
+            return {
+                fillColor: color,
+                weight: 1.5,
+                color: color,
+                opacity: 0.5,
+                fillOpacity: 0.7
+            }
+        }
+        else {
+            return {
+                fillColor: color,
+                weight: 1,
+                color: '#fff',
+                opacity: 1,
+                fillOpacity: 0.7
+            }
+        }
+    }
+
     function empty_style(feature) {
         return {
             weight: 1,
@@ -970,13 +1127,86 @@ $(window).resize(function () {
                     }
                 })
             );
+            cta_layer2.addLayer(
+                L.geoJson(data.features, {
+                    style: function(feature) {
+                        var final_style = {
+                            weight: 3,
+                            opacity: 0.6
+                        }
+                        switch (name) {
+                            case 'blue':
+                                final_style.color = '#00a1de';
+                                break;
+                            case 'brown':
+                                final_style.color = '#62361b';
+                                break;
+                            case 'green':
+                                final_style.color = '#009b3a';
+                                break;
+                            case 'orange':
+                                final_style.color = '#f9461c';
+                                break;
+                            case 'pink':
+                                final_style.color = '#e27ea6';
+                                break;
+                            case 'purple':
+                                final_style.color = '#522398';
+                                break;
+                            case 'red':
+                                final_style.color = '#c60c30';
+                                break;
+                            case 'yellow':
+                                final_style.color = '#f9e300';
+                                break;
+                            case 'metra':
+                                final_style.color = '#679aaf';
+                                break;
+                        }
+                        return final_style;
+                    }
+                })
+            );
         });
     }
 
     function show_lines() {
         if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
-            map2.addLayer(cta_layer);
+            map2.addLayer(cta_layer2);
+        }
+    }
+
+    function load_community() {
+        $.getJSON($SCRIPT_ROOT + "/static/json/neighborhoods.json", function(data) {
+            community_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+            community_layer2.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+        });
+    }
+
+    function show_community() {
+        console.log('in show_community')
+        if ($('#checkbox-community').is(':checked')) {
+            map.addLayer(community_layer);
+            map2.addLayer(community_layer2);
         }
     }
 

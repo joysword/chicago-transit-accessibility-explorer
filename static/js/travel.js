@@ -16,6 +16,7 @@ $(window).resize(function () {
     var category;
     var cache_index;
     var cta_layer = new L.FeatureGroup();
+    var community_layer = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow", "metra"];
 
     var cur_num_metro;
@@ -44,6 +45,8 @@ $(window).resize(function () {
 
     load_lines();
     show_lines();
+    load_community();
+    show_community();
 
     var legend_iso = L.control({position: 'bottomleft'});
     legend_iso.onAdd = function(map) {
@@ -82,6 +85,15 @@ $(window).resize(function () {
         }
         else {
             map.removeLayer(cta_layer);
+        }
+    });
+
+    $('#checkbox-community').change(function(){
+        if ($('#checkbox-community').is(':checked')) {
+            map.addLayer(community_layer);
+        }
+        else {
+            map.removeLayer(community_layer);
         }
     });
 
@@ -494,6 +506,27 @@ $(window).resize(function () {
     function show_lines() {
         if ($('#checkbox-cta').is(':checked')) {
             map.addLayer(cta_layer);
+        }
+    }
+
+    function load_community() {
+        $.getJSON($SCRIPT_ROOT + "/static/json/neighborhoods.json", function(data) {
+            community_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+        });
+    }
+
+    function show_community() {
+        if ($('#checkbox-community').is(':checked')) {
+            map.addLayer(community_layer);
         }
     }
 
