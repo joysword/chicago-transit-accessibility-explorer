@@ -58,9 +58,19 @@ function get_color_fixed(d) {
     }
 }
 
+function getMaxOfArray(numArray) {
+  return Math.max.apply(null, numArray);
+}
+
+function getMinOfArray(numArray) {
+  return Math.min.apply(null, numArray);
+}
+
 (function(){
     //var cached_layers = {};
     var cached_json = {};
+    var cached_max_acc = {};
+    var cached_min_acc = {};
     var cache_index;
     var cached_jenks = {};
     var metro_layer;
@@ -81,6 +91,8 @@ function get_color_fixed(d) {
     var val = [];
 
     var my_layer = null;
+
+    var cur_total = 0;
 
     var total_jobs = {};
     total_jobs['C000'] = 3899528;
@@ -218,8 +230,63 @@ function get_color_fixed(d) {
             labels.push('<i style="background:' + get_color(low) + '"></i>' +
                 low.toFixed(2) + '%' + (high ? '&ndash;' + high.toFixed(2) + '%': '+'));
         });
-        div.innerHTML = '<div><strong>' + 'Accessibility:' + '</strong><br />' + labels.join('<br />') + '</div>';
+        legend_status = '<h5>Currently showing:</h5><p>Accessibility to '+landuseText()+'<br>';
+        legend_status += 'by '+modeText()+'<br>within '+thresholdText()+'<br></p>';
+        legend_status += '<p> total number: '+countText()+'<br>';
+        legend_status += 'maximum accessibility: '+maxAccText()+'<br>';
+        legend_status += 'minimum accessibility: '+minAccText()+'</p>';
+        div.innerHTML = '<div><table><tr><th colspan="2"><strong>Accessibility:</strong></th></tr><tr><td>' + labels.join('<br>') + '</td><td style="font-size: 0.8pm; padding-left:15px">' + legend_status + '</td></tr></table></div>';
         return div;
+    }
+
+    landuseText = function() {
+        var ret = $('#select-acc').children(':selected').text();
+        if (ret === 'Jobs'){
+            ret = $('#select-filter').children(':selected').text();
+        }
+        if (ret === 'All Jobs') {
+            ret = 'All';
+        }
+        else {
+            ret = $('#form-category').children("[class!='no-disp']").children('select').children(':selected').text();
+        }
+
+        ret = '<a style="text-decoration: underline;">' + ret + '</a>' + ' jobs';
+        return ret;
+    }
+
+    modeText = function() {
+        var ret = $('#select-type').children(':selected').text();
+        if (ret === 'Transit') {
+            console.log('in modeText() if transit');
+            ret = '<a style="text-decoration: underline;">' + ret + '</a>';
+            ret += ' at <a style="text-decoration: underline;">' + $('#select-time').children(':selected').text() + '</a>';
+        }
+        else {
+           ret = '<a style="text-decoration: underline;">' + ret + '</a>';
+        }
+        return ret;
+    }
+
+    thresholdText = function() {
+        var ret = $('#select-threshold').children(':selected').text();
+        ret = '<a style="text-decoration: underline;">' + ret + '</a>';
+        return ret;
+    }
+
+    countText = function() {
+        if ($('#select-acc').val() != 'park_area')
+            return cur_total
+        else
+            return cur_total.toFixed(2)
+    }
+
+    maxAccText = function() {
+        return cached_max_acc[cache_index].toFixed(1) + '%';
+    }
+
+    minAccText = function() {
+        return cached_min_acc[cache_index].toFixed(1) + '%';
     }
 
     var legend_fixed = L.control({position: 'bottomleft'});
@@ -234,7 +301,12 @@ function get_color_fixed(d) {
             labels.push('<i style="background:' + get_color_fixed(low) + '"></i>' +
                 low + '%' + (high ? '&ndash;' + high + '%': '+'));
         });
-        div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
+        legend_status = '<h5>Currently showing:</h5><p>Accessibility to '+landuseText()+'<br>';
+        legend_status += 'by '+modeText()+'<br>within '+thresholdText()+'<br></p>';
+        legend_status += '<p> total number: '+countText()+'<br>';
+        legend_status += 'maximum accessibility: '+maxAccText()+'<br>';
+        legend_status += 'minimum accessibility: '+minAccText()+'</p>';
+        div.innerHTML = '<div><table><tr><th colspan="2"><strong>Accessibility:</strong></th></tr><tr><td>' + labels.join('<br>') + '</td><td style="font-size: 0.8pm; padding-left:15px">' + legend_status + '</td></tr></table></div>';
         return div;
     }
 
@@ -413,7 +485,6 @@ function get_color_fixed(d) {
 
     $('#btn-submit').on('click', show_map);
     $('#btn-submit').on('click', show_map2);
-    show_map2();
 
     // called when the button is clicked
     function show_map(e) {
@@ -580,6 +651,9 @@ function get_color_fixed(d) {
                         val.push(100*data[i]);
                     }
                 }
+                cached_max_acc[cache_index] = getMaxOfArray(val)
+                cached_min_acc[cache_index] = getMinOfArray(val)
+
                 jenks_cutoffs = jenks(val, 7);
                 console.log('jenks:', jenks_cutoffs);
                 jenks_cutoffs[0] = 0;
@@ -605,6 +679,13 @@ function get_color_fixed(d) {
 
         var data = cached_json[cache_index];
 
+        if (landuse=="job") {
+            cur_total = total_jobs[category];
+        }
+        else {
+            cur_total = total_landuse[landuse];
+        }
+
         if ($('#select-scale').val() == 'jenks') {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
@@ -613,21 +694,21 @@ function get_color_fixed(d) {
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(acc_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + cur_total;
                     }
                     else {
                         bg.setStyle(acc_style(0));
-                        content += '<br>Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                        content += '<br>Accessibility: N/A<br>Total jobs: ' + cur_total;
                     }
                 }
                 else {
                     if (_.has(data, num)) {
                         bg.setStyle(acc_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?cur_total.toFixed(2):cur_total);
                     }
                     else {
                         bg.setStyle(acc_style(0));
-                        content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                        content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?cur_total.toFixed(2):cur_total);
                     }
                 }
                 bg.bindLabel(content);
@@ -641,21 +722,21 @@ function get_color_fixed(d) {
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(fix_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + total_jobs[category];
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + cur_total;
                     }
                     else {
                         bg.setStyle(fix_style(0));
-                        content += '<br>Accessibility: N/A<br>Total jobs: ' + total_jobs[category];
+                        content += '<br>Accessibility: N/A<br>Total jobs: ' + cur_total;
                     }
                 }
                 else {
                     if (_.has(data, num)) {
                         bg.setStyle(fix_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?cur_total.toFixed(2):cur_total);
                     }
                     else {
                         bg.setStyle(fix_style(0));
-                        content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?total_landuse[landuse].toFixed(2):total_landuse[landuse]);
+                        content += '<br>Accessibility: N/A<br>Total number: ' + ((landuse == 'park_area')?cur_total.toFixed(2):cur_total);
                     }
                 }
                 bg.bindLabel(content);

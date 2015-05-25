@@ -219,6 +219,20 @@ body {
     opacity: 0.7;
 }
 
+.legend table h6 {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.legend table p {
+  font-size: 12px;
+}
+
+.legend table a {
+  color: #555;
+}
+
+
 /*================ *
  *================ *
  *=====SHI YIN==== *

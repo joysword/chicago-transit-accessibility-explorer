@@ -61,7 +61,7 @@ $(window).resize(function () {
             high/60 + ' min');
         });
         labels.push('<i style="background:' + get_iso_color(iso_cutoff[iso_cutoff.length-1]+1000) + '"></i>' + iso_cutoff[iso_cutoff.length-1]/60 + ' min+');
-        div.innerHTML = '<div><strong>' + 'Travel Time:' + '</strong><br />' + labels.join('<br />') + '</div>';
+        div.innerHTML = '<div><strong>' + 'Travel Time:' + '</strong><br>' + labels.join('<br>') + '</div>';
         return div;
     }
 
