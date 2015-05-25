@@ -158,7 +158,7 @@ function get_color_fixed(d) {
                 low.toFixed(2) + '%' + (high ? '&ndash;' + high.toFixed(2) + '%': '+'));
 
         });
-        div.innerHTML = '<div><strong>' + 'Legend' + '</strong><br />' + labels.join('<br />') + '</div>';
+        div.innerHTML = '<div><strong>' + 'Accessibility:' + '</strong><br />' + labels.join('<br />') + '</div>';
         return div;
     }
 
