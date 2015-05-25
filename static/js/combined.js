@@ -412,7 +412,7 @@ function get_color_fixed(d) {
     });
 
     $('#btn-submit').on('click', show_map);
-    //$('#btn-submit').on('click', show_map2);
+    $('#btn-submit').on('click', show_map2);
     show_map2();
 
     // called when the button is clicked
