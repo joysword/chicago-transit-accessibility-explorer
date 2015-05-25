@@ -412,7 +412,8 @@ function get_color_fixed(d) {
     });
 
     $('#btn-submit').on('click', show_map);
-    $('#btn-submit').on('click', show_map2);
+    //$('#btn-submit').on('click', show_map2);
+    show_map2();
 
     // called when the button is clicked
     function show_map(e) {
@@ -723,9 +724,10 @@ function get_color_fixed(d) {
         // end block 3
     }
 
-    function show_map2(e) {
+    //function show_map2(e) {
+    function show_map2() {
         console.log('in show_map2()');
-        layer = ($('#select-acc').val()=='job')?'metro':'chicago';
+        layer = 'metro'; // for now we only show metropolitan layer
         var type =  $('#select-type').val();
         var time =  $('#select-time').val();
 
@@ -1179,6 +1181,28 @@ function get_color_fixed(d) {
 
     function load_community() {
         $.getJSON($SCRIPT_ROOT + "/static/json/neighborhoods.json", function(data) {
+            community_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+            community_layer2.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+        });
+        $.getJSON($SCRIPT_ROOT + "/static/json/cities.json", function(data) {
             community_layer.addLayer(
                 L.geoJson(data.features, {
                     style: {

@@ -97,12 +97,14 @@ $(window).resize(function () {
         }
     });
 
-    $('#btn-submit').on('click', show_map);
+    //$('#btn-submit').on('click', show_map);
+    show_map();
 
     // called when the button is clicked
-    function show_map(e) {
+    //function show_map(e) {
+    function show_map() {
         console.log('in show_map()');
-        layer = $('#select-layer').val();
+        layer = 'metro'; // for now we only show metropolitan layer
         var type =  $('#select-type').val();
         var time =  $('#select-time').val();
 
@@ -511,6 +513,18 @@ $(window).resize(function () {
 
     function load_community() {
         $.getJSON($SCRIPT_ROOT + "/static/json/neighborhoods.json", function(data) {
+            community_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+        });
+        $.getJSON($SCRIPT_ROOT + "/static/json/cities.json", function(data) {
             community_layer.addLayer(
                 L.geoJson(data.features, {
                     style: {
