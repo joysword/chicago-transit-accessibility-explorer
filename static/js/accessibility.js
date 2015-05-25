@@ -935,6 +935,18 @@ function get_color_fixed(d) {
                 })
             );
         });
+        $.getJSON($SCRIPT_ROOT + "/static/json/cities.json", function(data) {
+            community_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#333'
+                    }
+                })
+            );
+        });
     }
 
     function show_community() {
