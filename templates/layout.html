@@ -19,6 +19,7 @@
         <!-- custom css -->
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
         <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/overlay.css') }}" rel="stylesheet">
 
         <script type='text/javascript'>
             $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -90,5 +91,6 @@
         <!-- End of StatCounter Code for Default Guide -->
 
         {% block js %}{% endblock %}
+        <script src="{{ url_for('static', filename='js/overlay.js') }}"></script>
     </body>
 </html>
