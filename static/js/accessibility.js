@@ -66,6 +66,11 @@ function getMinOfArray(numArray) {
 }
 
 (function(){
+    if (localStorage.getItem('acc_popup') == null) {
+        console.log('in acc show_popup');
+        show_popup();
+        localStorage.setItem('acc_popup', 1);
+    }
     //var cached_layers = {};
     var cached_json = {};
     var cached_max_acc = {};

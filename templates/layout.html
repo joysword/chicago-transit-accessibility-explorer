@@ -72,6 +72,9 @@
         <!-- D3 TopoJson JavaScript -->
         <script src="{{ url_for('static', filename='js/topojson.js') }}"></script>
 
+        <!-- Awesome Overlays JavaScript -->
+        <script src="{{ url_for('static', filename='js/overlay.js') }}"></script>
+
         <!-- Start of StatCounter Code for Default Guide -->
         <script type="text/javascript">
         var sc_project=10364438;
@@ -91,6 +94,5 @@
         <!-- End of StatCounter Code for Default Guide -->
 
         {% block js %}{% endblock %}
-        <script src="{{ url_for('static', filename='js/overlay.js') }}"></script>
     </body>
 </html>

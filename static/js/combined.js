@@ -67,6 +67,11 @@ function getMinOfArray(numArray) {
 }
 
 (function(){
+    if (localStorage.getItem('combined_popup') == null) {
+        console.log('in combined show_popup');
+        show_popup();
+        localStorage.setItem('combined_popup', 1);
+    }
     //var cached_layers = {};
     var cached_json = {};
     var cached_max_acc = {};

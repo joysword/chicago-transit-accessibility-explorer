@@ -1,6 +1,6 @@
 
 // https://kopepasah.com/tutorial/awesome-overlays-with-simple-css-javascript-html/
-(function () {
+var show_popup = function () {
     var overlay = 'overlay-1'
     var id = '#' + overlay
     $(id).addClass('overlay-open');
@@ -33,4 +33,4 @@
             $('body').removeClass('overlay-view');
         }
     });
-})();
+}

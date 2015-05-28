@@ -6,6 +6,11 @@ $(window).resize(function () {
 }).resize();
 
 (function(){
+    if (localStorage.getItem('travel_popup') == null) {
+        console.log('in combined show_popup');
+        show_popup();
+        localStorage.setItem('travel_popup', 1);
+    }
     //var cached_layers = {};
     var cached_json = {};
     var cached_jenks = {};
@@ -72,12 +77,18 @@ $(window).resize(function () {
         switch (this.value) {
             case "transit":
                 $('#form-time').removeClass('no-disp');
+                show_map();
                 break;
             default:
                 $('#form-time').addClass('no-disp');
+                show_map();
                 break;
         }
     });
+
+    $('#select-time').change(function(){
+        show_map();
+    })
 
     $('#checkbox-cta').change(function(){
         if ($('#checkbox-cta').is(':checked')) {
