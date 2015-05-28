@@ -13,6 +13,7 @@
 }
 
 .overlay-open {
+  top: 50px;
   bottom: 0;
   opacity: 1;
   transition: opacity 200ms linear, bottom 0s linear;
