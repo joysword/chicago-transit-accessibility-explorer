@@ -7,10 +7,11 @@ $(window).resize(function () {
 
 (function(){
     if (localStorage.getItem('travel_popup') == null) {
-        console.log('in combined show_popup');
         show_popup();
-        localStorage.setItem('travel_popup', 1);
     }
+    $('#btn-close-all').on('click', function(e) {
+        localStorage.setItem('travel_popup', 1);
+    });
     //var cached_layers = {};
     var cached_json = {};
     var cached_jenks = {};

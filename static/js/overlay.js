@@ -13,12 +13,10 @@ var show_popup = function () {
      * classes restores the current state of the user
      * experience. Again, all handled by CSS (awesome).
      */
-    $(id).on('click', function(e) {
+    $('#btn-close-one, #btn-close-all').on('click', function(e) {
         // Verify that only the outer wrapper was clicked.
-        if (e.target.id == overlay) {
-            $(id).removeClass('overlay-open');
-            $('body').removeClass('overlay-view');
-        }
+        $(id).removeClass('overlay-open');
+        $('body').removeClass('overlay-view');
     });
 
     /**

@@ -67,10 +67,11 @@ function getMinOfArray(numArray) {
 
 (function(){
     if (localStorage.getItem('acc_popup') == null) {
-        console.log('in acc show_popup');
         show_popup();
-        localStorage.setItem('acc_popup', 1);
     }
+    $('#btn-close-all').on('click', function(e) {
+        localStorage.setItem('acc_popup', 1);
+    });
     //var cached_layers = {};
     var cached_json = {};
     var cached_max_acc = {};
@@ -177,27 +178,33 @@ function getMinOfArray(numArray) {
         });
         legend_status = '<h5>Currently showing:</h5><p>Accessibility to '+landuseText()+'<br>';
         legend_status += 'by '+modeText()+'<br>within '+thresholdText()+'<br></p>';
-        legend_status += '<p> total number: '+countText()+'<br>';
-        legend_status += 'maximum accessibility: '+maxAccText()+'<br>';
-        legend_status += 'minimum accessibility: '+minAccText()+'</p>';
+        legend_status += '<p>'+countText()+'<br>';
+        legend_status += 'Maximum accessibility: '+maxAccText()+'<br>';
+        legend_status += 'Minimum accessibility: '+minAccText()+'</p>';
         div.innerHTML = '<div><table><tr><th colspan="2"><strong>Accessibility:</strong></th></tr><tr><td>' + labels.join('<br>') + '</td><td style="font-size: 0.8pm; padding-left:15px">' + legend_status + '</td></tr></table></div>';
         return div;
     }
 
     landuseText = function() {
         var ret = $('#select-acc').children(':selected').text();
+        var filter = '';
         if (ret === 'Jobs'){
-            ret = $('#select-filter').children(':selected').text();
-        }
-        if (ret === 'All Jobs') {
-            ret = 'All';
+            ret = '<a style="text-decoration: underline;">'+ret+'</a><br>(Filter: ';
+            filter = $('#select-filter').children(':selected').text();
+            if (filter === 'All Jobs') {
+                filter = '<a style="text-decoration: underline;">' + filter + '</a>';
+            }
+            else {
+                filter += ' | <a style="text-decoration: underline;">';
+                filter += $('#form-category').children("[class!='no-disp']").children('select').children(':selected').text();
+                filter += '</a>'
+            }
+            return ret + filter + ')';
         }
         else {
-            ret = $('#form-category').children("[class!='no-disp']").children('select').children(':selected').text();
+            ret = '<a style="text-decoration: underline;">' + ret + '</a>';
+            return ret;
         }
-
-        ret = '<a style="text-decoration: underline;">' + ret + '</a>' + ' jobs';
-        return ret;
     }
 
     modeText = function() {
@@ -220,10 +227,41 @@ function getMinOfArray(numArray) {
     }
 
     countText = function() {
-        if ($('#select-acc').val() != 'park_area')
-            return cur_total
-        else
-            return cur_total.toFixed(2)
+        var txt = $('#select-acc').val();
+        var ret = 'Total '
+        switch (txt) {
+            case "job":
+                ret += 'num: ' + cur_total + ' jobs'
+                break;
+            case "park_area":
+                ret += 'park area: ' + cur_total.toFixed(2) + ' (sq. ft.)'
+                break;
+            case "park_count":
+                ret += 'num: ' + cur_total + ' parks';
+                break;
+            case "library":
+                ret += 'num: ' + cur_total + ' libraries';
+                break;
+            case "fire_sta":
+                ret += 'num: ' + cur_total + ' fire stations';
+                break;
+            case "school":
+                ret += 'num: ' + cur_total + ' schools';
+                break;
+            case "pri_sch":
+                ret += 'num: ' + cur_total + ' private schools';
+                break;
+            case "pub_sch":
+                ret += 'num: ' + cur_total + ' public schools';
+                break;
+            case "hospital":
+                ret += 'num: ' + cur_total + ' hospitals';
+                break;
+            case "grocery":
+                ret += 'num: ' + cur_total + ' grocery stores';
+                break;
+        }
+        return ret;
     }
 
     maxAccText = function() {
@@ -248,9 +286,9 @@ function getMinOfArray(numArray) {
         });
         legend_status = '<h5>Currently showing:</h5><p>Accessibility to '+landuseText()+'<br>';
         legend_status += 'by '+modeText()+'<br>within '+thresholdText()+'<br></p>';
-        legend_status += '<p> total number: '+countText()+'<br>';
-        legend_status += 'maximum accessibility: '+maxAccText()+'<br>';
-        legend_status += 'minimum accessibility: '+minAccText()+'</p>';
+        legend_status += '<p>'+countText()+'<br>';
+        legend_status += 'Maximum accessibility: '+maxAccText()+'<br>';
+        legend_status += 'Minimum accessibility: '+minAccText()+'</p>';
         div.innerHTML = '<div><table><tr><th colspan="2"><strong>Accessibility:</strong></th></tr><tr><td>' + labels.join('<br>') + '</td><td style="font-size: 0.8pm; padding-left:15px">' + legend_status + '</td></tr></table></div>';
         return div;
     }
