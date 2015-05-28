@@ -69,7 +69,7 @@ function getMinOfArray(numArray) {
     if (localStorage.getItem('acc_popup') == null) {
         show_popup();
     }
-    $('#btn-close-all').on('click', function(e) {
+    $('#btn-all-acc').on('click', function(e) {
         localStorage.setItem('acc_popup', 1);
     });
     //var cached_layers = {};

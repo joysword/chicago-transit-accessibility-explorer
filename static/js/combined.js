@@ -70,7 +70,7 @@ function getMinOfArray(numArray) {
     if (localStorage.getItem('combined_popup') == null) {
         show_popup();
     }
-    $('#btn-close-all').on('click', function(e) {
+    $('#btn-all-combined').on('click', function(e) {
         localStorage.setItem('combined_popup', 1);
     });
     //var cached_layers = {};

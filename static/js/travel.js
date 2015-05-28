@@ -9,7 +9,7 @@ $(window).resize(function () {
     if (localStorage.getItem('travel_popup') == null) {
         show_popup();
     }
-    $('#btn-close-all').on('click', function(e) {
+    $('#btn-all-travel').on('click', function(e) {
         localStorage.setItem('travel_popup', 1);
     });
     //var cached_layers = {};
