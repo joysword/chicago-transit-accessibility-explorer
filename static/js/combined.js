@@ -58,14 +58,6 @@ function get_color_fixed(d) {
     }
 }
 
-function getMaxOfArray(numArray) {
-  return Math.max.apply(null, numArray);
-}
-
-function getMinOfArray(numArray) {
-  return Math.min.apply(null, numArray);
-}
-
 (function(){
     if (localStorage.getItem('combined_popup') == null) {
         show_popup();
@@ -694,10 +686,12 @@ function getMinOfArray(numArray) {
                         val.push(100*data[i]);
                     }
                 }
-                cached_max_acc[cache_index] = getMaxOfArray(val)
-                cached_min_acc[cache_index] = getMinOfArray(val)
 
                 jenks_cutoffs = jenks(val, 7);
+
+                cached_max_acc[cache_index] = jenks_cutoffs[7];
+                cached_min_acc[cache_index] = jenks_cutoffs[0];
+
                 console.log('jenks:', jenks_cutoffs);
                 jenks_cutoffs[0] = 0;
                 jenks_cutoffs.pop(); // don't need to know what is the largest
