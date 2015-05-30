@@ -696,8 +696,8 @@ function get_color_fixed(d) {
                 // block 2
                 val = [];
                 for (var i in data) {
-                    if (data[i]>=0) {
-                        val.push(100*data[i]);
+                    if (data[i][0]>=0) {
+                        val.push(100*data[i][0]);
                     }
                 }
 
@@ -744,8 +744,9 @@ function get_color_fixed(d) {
                 var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
                 if (landuse=="job") {
                     if (_.has(data, num)) {
-                        bg.setStyle(acc_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + cur_total;
+                        bg.setStyle(acc_style(data[num][0]));
+                        content += '<br>Accessible jobs: ' + data[num][1];
+                        content += '<br>Accessibility: ' + (100*data[num][0]).toFixed(1) + '%<br>Total jobs: ' + cur_total;
                     }
                     else {
                         bg.setStyle(acc_style(0));
@@ -754,8 +755,9 @@ function get_color_fixed(d) {
                 }
                 else {
                     if (_.has(data, num)) {
-                        bg.setStyle(acc_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?cur_total.toFixed(2):cur_total);
+                        bg.setStyle(acc_style(data[num][0]));
+                        content += '<br>Accessible number: ' + ((landuse=='park_area')?data[num][1].toFixed(2):data[num][1]);
+                        content += '<br>Accessibility: ' + (100*data[num][0]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?cur_total.toFixed(2):cur_total);
                     }
                     else {
                         bg.setStyle(acc_style(0));
@@ -772,8 +774,9 @@ function get_color_fixed(d) {
                 var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
                 if (landuse=="job") {
                     if (_.has(data, num)) {
-                        bg.setStyle(fix_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total jobs: ' + cur_total;
+                        bg.setStyle(fix_style(data[num][0]));
+                        content += '<br>Accessible jobs: ' + data[num][1];
+                        content += '<br>Accessibility: ' + (100*data[num][0]).toFixed(1) + '%<br>Total jobs: ' + cur_total;
                     }
                     else {
                         bg.setStyle(fix_style(0));
@@ -782,8 +785,9 @@ function get_color_fixed(d) {
                 }
                 else {
                     if (_.has(data, num)) {
-                        bg.setStyle(fix_style(data[num]));
-                        content += '<br>Accessibility: ' + (100*data[num]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?cur_total.toFixed(2):cur_total);
+                        bg.setStyle(fix_style(data[num][0]));
+                        content += '<br>Accessible number: ' + ((landuse=='park_area')?data[num][1].toFixed(2):data[num][1]);
+                        content += '<br>Accessibility: ' + (100*data[num][0]).toFixed(1) + '%<br>Total number: ' + ((landuse=='park_area')?cur_total.toFixed(2):cur_total);
                     }
                     else {
                         bg.setStyle(fix_style(0));
