@@ -14,10 +14,8 @@ $(window).resize(function () {
     });
     //var cached_layers = {};
     var cached_json = {};
-    var cached_jenks = {};
     var metro_layer;
     var chicago_layer;
-    var jenks_cutoffs;
     var layer;
     var category;
     var cache_index;
@@ -327,45 +325,6 @@ $(window).resize(function () {
         return Math.floor(sec/60) + ' min';
     }
 
-    function get_color(d) {
-        if (d > cached_jenks[cache_index][3]) {
-            if (d > cached_jenks[cache_index][5]) {
-                if (d > cached_jenks[cache_index][6]) {
-                    return map_colors[7];
-                }
-                else {
-                    return map_colors[6];
-                }
-            }
-            else {
-                if (d > cached_jenks[cache_index][4]) {
-                    return map_colors[5];
-                }
-                else {
-                    return map_colors[4];
-                }
-            }
-        }
-        else {
-            if (d > cached_jenks[cache_index][1]) {
-                if (d > cached_jenks[cache_index][2]) {
-                    return map_colors[3];
-                }
-                else {
-                    return map_colors[2];
-                }
-            }
-            else {
-                if (d > cached_jenks[cache_index][0]) {
-                    return map_colors[1];
-                }
-                else {
-                    return map_colors[0];
-                }
-            }
-        }
-    }
-
     function get_iso_color(seconds) {
         if (seconds <= iso_cutoff[0]) {
             return '#f46d6c';
@@ -411,50 +370,6 @@ $(window).resize(function () {
 
         }
         return '#7c7dbb';
-    }
-
-    function acc_style(feature) {
-        var color = get_color(100*feature.properties[category]);
-        if (map.getZoom()<=10) {
-            return {
-                fillColor: color,
-                weight: 1.5,
-                color: color,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            }
-        }
-        else {
-            return {
-                fillColor: color,
-                weight: 1,
-                color: '#fff',
-                opacity: 1,
-                fillOpacity: 0.7
-            }
-        }
-    }
-
-    function landuse_style(feature) {
-        var color = get_color(100*feature.properties[landuse]);
-        if (map.getZoom()<=10) {
-            return {
-                fillColor: color,
-                weight: 1.5,
-                color: color,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            }
-        }
-        else {
-            return {
-                fillColor: color,
-                weight: 1,
-                color: '#fff',
-                opacity: 1,
-                fillOpacity: 0.7
-            }
-        }
     }
 
     function empty_style(feature) {
