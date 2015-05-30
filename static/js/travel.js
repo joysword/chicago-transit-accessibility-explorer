@@ -528,19 +528,7 @@ $(window).resize(function () {
             community_layer.addLayer(
                 L.geoJson(data.features, {
                     style: {
-                        weight: 2,
-                        opacity: 0.8,
-                        fill: false,
-                        color: '#333'
-                    }
-                })
-            );
-        });
-        $.getJSON($SCRIPT_ROOT + "/static/json/cities.json", function(data) {
-            community_layer.addLayer(
-                L.geoJson(data.features, {
-                    style: {
-                        weight: 2,
+                        weight: 1,
                         opacity: 0.8,
                         fill: false,
                         color: '#333'
