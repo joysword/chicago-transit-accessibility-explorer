@@ -18,17 +18,4 @@ var show_popup = function () {
         $(id).removeClass('overlay-open');
         $('body').removeClass('overlay-view');
     });
-
-    /**
-     * Closes the overlay when the esc key is pressed. See
-     * comment above on closing the overlay for more info
-     * on how this is accomplished.
-     */
-    $(document).keyup(function(e) {
-        // Verify that the esc key was pressed.
-        if (E.keyCode == 27) {
-            $(id).removeClass('overlay-open');
-            $('body').removeClass('overlay-view');
-        }
-    });
 }

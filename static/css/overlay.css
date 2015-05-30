@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 10000;
+  z-index: -10000;
   opacity: 0;
   background: transparent;
   transition: opacity 200ms linear, bottom 0s linear 200ms;
@@ -16,6 +16,7 @@
   top: 50px;
   bottom: 0;
   opacity: 1;
+  z-index: 10000;
   transition: opacity 200ms linear, bottom 0s linear;
 }
 
