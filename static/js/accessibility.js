@@ -501,14 +501,14 @@ function get_color_fixed(d) {
         if (this.value == 'jenks') {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
-                bg.setStyle(acc_style(data[bg.feature.properties.num]));
+                bg.setStyle(acc_style(data[bg.feature.properties.num][0]));
             }
             legend_jenks.addTo(map);
         }
         else {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
-                bg.setStyle(fix_style(data[bg.feature.properties.num]));
+                bg.setStyle(fix_style(data[bg.feature.properties.num][0]));
             }
             legend_fixed.addTo(map);
         }
