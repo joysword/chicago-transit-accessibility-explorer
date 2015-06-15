@@ -727,7 +727,7 @@ function get_color_fixed(d) {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
                 var num = bg.feature.properties.num;
-                var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(acc_style(data[num][0]));
@@ -757,7 +757,7 @@ function get_color_fixed(d) {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
                 var num = bg.feature.properties.num;
-                var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(fix_style(data[num][0]));
@@ -902,7 +902,7 @@ function get_color_fixed(d) {
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
-                            var content ='GEOID10: ' + feature.properties.GEOID10;
+                            var content ='Block Group ID: ' + feature.properties.GEOID10;
                             layer.bindLabel(content);
                             layer.on('click', clickHandler_metro);
                             which_feature++;
@@ -920,7 +920,7 @@ function get_color_fixed(d) {
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
-                            var content ='GEOID10: ' + feature.properties.GEOID10;
+                            var content ='Block Group ID: ' + feature.properties.GEOID10;
                             layer.bindLabel(content);
                             layer.on('click', clickHandler_chicago);
                             which_feature++;
@@ -1008,7 +1008,7 @@ function get_color_fixed(d) {
             $.getJSON($SCRIPT_ROOT + file_prefix + "chicago_" + travel_type + "/" + num + '.json', function(data){
                 $.each(chicago_layer_2._layers, function(i, bg){
                     var num = bg.feature.properties.num;
-                    var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                    var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                     if (_.has(data, num))
                     {
                         bg.setStyle({
@@ -1035,7 +1035,7 @@ function get_color_fixed(d) {
             $.getJSON($SCRIPT_ROOT + file_prefix + "large_" + travel_type + "/" + num + '.json', function(data){
                 $.each(metro_layer_2._layers, function(i, bg){
                     var num = bg.feature.properties.num;
-                    var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                    var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                     if (_.has(data, num))
                     {
                         bg.setStyle({

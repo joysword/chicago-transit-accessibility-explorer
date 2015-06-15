@@ -741,7 +741,7 @@ function get_color_fixed(d) {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
                 var num = bg.feature.properties.num;
-                var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(acc_style(data[num][0]));
@@ -771,7 +771,7 @@ function get_color_fixed(d) {
             for (var i in my_layer._layers) {
                 var bg = my_layer._layers[i];
                 var num = bg.feature.properties.num;
-                var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(fix_style(data[num][0]));

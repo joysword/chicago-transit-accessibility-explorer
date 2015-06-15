@@ -167,7 +167,7 @@ $(window).resize(function () {
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
-                            var content ='GEOID10: ' + feature.properties.GEOID10;
+                            var content ='Block Group ID: ' + feature.properties.GEOID10;
                             layer.bindLabel(content);
                             layer.on('click', clickHandler_metro);
                             which_feature++;
@@ -185,7 +185,7 @@ $(window).resize(function () {
                         //filter: acc_filter,
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
-                            var content ='GEOID10: ' + feature.properties.GEOID10;
+                            var content ='Block Group ID: ' + feature.properties.GEOID10;
                             layer.bindLabel(content);
                             layer.on('click', clickHandler_chicago);
                             which_feature++;
@@ -271,7 +271,7 @@ $(window).resize(function () {
             $.getJSON($SCRIPT_ROOT + file_prefix + "chicago_" + travel_type + "/" + num + '.json', function(data){
                 $.each(chicago_layer._layers, function(i, bg){
                     var num = bg.feature.properties.num;
-                    var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                    var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                     if (_.has(data, num)) {
                         bg.setStyle({
                             fill: true,
@@ -296,7 +296,7 @@ $(window).resize(function () {
             $.getJSON($SCRIPT_ROOT + file_prefix + "large_" + travel_type + "/" + num + '.json', function(data){
                 $.each(metro_layer._layers, function(i, bg){
                     var num = bg.feature.properties.num;
-                    var content = 'GEOID10: ' + bg.feature.properties.GEOID10;
+                    var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
                     if (_.has(data, num))
                     {
                         bg.setStyle({
