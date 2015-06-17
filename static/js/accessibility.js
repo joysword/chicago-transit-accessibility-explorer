@@ -226,7 +226,7 @@ function get_color_fixed(d) {
                 ret += 'num: ' + cur_total + ' jobs'
                 break;
             case "park_area":
-                ret += 'park area: ' + cur_total.toFixed(2) + ' (sq. ft.)'
+                ret += 'park area: ' + cur_total.toFixed(2) + ' (sq. miles)'
                 break;
             case "park_count":
                 ret += 'num: ' + cur_total + ' parks';
