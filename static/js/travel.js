@@ -28,9 +28,9 @@ $(window).resize(function () {
 
     var iso_cutoff = [600, 1200, 1800, 2700, 3600, 4500, 5400, 6300, 7200];
 
-    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, minZoom: 9, zoomControl: false});
+    var map = L.map('map', {center: [41.8910,-87.8839], zoom: 11, maxZoom: 14, minZoom: 9, zoomControl: false});
 
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/joysword.i6b4jale/{z}/{x}/{y}.png', {
+    L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiam95c3dvcmQiLCJhIjoiSmJYSVNnUSJ9.is_i8oSQtofgH31ZkIMBgA', {
         attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://ntilahun.com' target='_blank'>&copy; The Urban Transporation & Behavior Research Group, UIC<a/>"
     }).addTo(map);
 
