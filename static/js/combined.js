@@ -59,12 +59,41 @@ function get_color_fixed(d) {
 }
 
 (function(){
+    var showNotification = function() {
+        console.log('in showNOtifcation');
+
+        if (localStorage.getItem('no_survey') != null) {
+            return;
+        }
+        $('#note').css('z-index', 1001);
+        $('#note').removeClass('no-disp');
+    }
     if (localStorage.getItem('combined_popup') == null) {
         show_popup();
     }
-    $('#btn-all-combined').on('click', function(e) {
+    else {
+        showNotification();
+    }
+    $('#btn-overlay-once').on('click', function(e) {
+        showNotification();
+    })
+    $('#btn-overlay-ever').on('click', function(e) {
         localStorage.setItem('combined_popup', 1);
+        showNotification();
     });
+    $('#btn-survey-no').on('click', function() {
+        localStorage.setItem('no_survey', 1);
+    })
+    $('#btn-survey-later').on('click', function() {
+        $('#note').css('z-index', -1);
+        $('#note').addClass('no-disp');
+    })
+    $('#btn-survey-now').on('click', function() {
+        localStorage.setItem('no_survey', 1);
+        $('#note').css('z-index', -1);
+        $('#note').addClass('no-disp');
+    })
+
     //var cached_layers = {};
     var cached_json = {};
     var cached_max_acc = {};
