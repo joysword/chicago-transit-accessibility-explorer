@@ -30,6 +30,8 @@ $(window).resize(function () {
     });
     $('#btn-survey-no').on('click', function() {
         localStorage.setItem('no_survey', 1);
+        $('#note').css('z-index', -1);
+        $('#note').addClass('no-disp');
     })
     $('#btn-survey-later').on('click', function() {
         $('#note').css('z-index', -1);
