@@ -62,11 +62,18 @@ function get_color_fixed(d) {
     var showNotification = function() {
         console.log('in showNOtifcation');
 
-        if (localStorage.getItem('no_survey') != null) {
+        if (localStorage.getItem('no_survey') == 1) {
             return;
         }
-        $('#note').css('z-index', 1001);
-        $('#note').removeClass('no-disp');
+        if (localStorage.getItem('later_survey') == 1) {
+            $('#note-not-first-time').css('z-index', 1001);
+            $('#note-not-first-time').removeClass('no-disp');
+        }
+        else {
+            $('#note-first-time').css('z-index', 1001);
+            $('#note-first-time').removeClass('no-disp');
+        }
+
     }
     if (localStorage.getItem('combined_popup') == null) {
         show_popup();
@@ -83,17 +90,18 @@ function get_color_fixed(d) {
     });
     $('#btn-survey-no').on('click', function() {
         localStorage.setItem('no_survey', 1);
-        $('#note').css('z-index', -1);
-        $('#note').addClass('no-disp');
+        $('.notification').css('z-index', -1);
+        $('.notification').addClass('no-disp');
     })
-    $('#btn-survey-later').on('click', function() {
-        $('#note').css('z-index', -1);
-        $('#note').addClass('no-disp');
+    $('.btn-survey-later').on('click', function() {
+        localStorage.setItem('later_survey', 1);
+        $('.notification').css('z-index', -1);
+        $('.notification').addClass('no-disp');
     })
     $('#btn-survey-now').on('click', function() {
         localStorage.setItem('no_survey', 1);
-        $('#note').css('z-index', -1);
-        $('#note').addClass('no-disp');
+        $('.notification').css('z-index', -1);
+        $('.notification').addClass('no-disp');
     })
 
     //var cached_layers = {};
