@@ -16,6 +16,87 @@ var map_colors = [
     '#005a32'
 ];
 
+var community = {};
+community[-1] = "N/A"
+community[0] = "N/A"
+community[1] = "Rogers Park"
+community[40] = "Washington Park"
+community[2] = "West Ridge"
+community[41] = "Hyde Park"
+community[3] = "Uptown"
+community[42] = "Woodlawn"
+community[4] = "Lincoln Square"
+community[43] = "South Shore"
+community[5] = "North Center"
+community[44] = "Chatham"
+community[6] = "Lake View"
+community[45] = "Avalon Park"
+community[7] = "Lincoln Park"
+community[46] = "South Chicago"
+community[8] = "Near North Side"
+community[47] = "Burnside"
+community[9] = "Edison Park"
+community[48] = "Calumet Heights"
+community[10] = "Norwood Park"
+community[49] = "Roseland"
+community[11] = "Jefferson Park"
+community[50] = "Pullman"
+community[12] = "Forest Glen"
+community[51] = "South Deering"
+community[13] = "North Park"
+community[52] = "East Side"
+community[14] = "Albany Park"
+community[53] = "West Pullman"
+community[15] = "Portage Park"
+community[54] = "Riverdale"
+community[16] = "Irving Park"
+community[55] = "Hegewisch"
+community[17] = "Dunning"
+community[56] = "Garfield Ridge"
+community[18] = "Montclare"
+community[57] = "Archer Heights"
+community[19] = "Belmont Cragin"
+community[58] = "Brighton Park"
+community[20] = "Hermosa"
+community[59] = "Mckinley Park"
+community[21] = "Avondale"
+community[60] = "Bridgeport"
+community[22] = "Logan Square"
+community[61] = "New City"
+community[23] = "Humboldt Park"
+community[62] = "West Elsdon"
+community[24] = "West Town"
+community[63] = "Gage Park"
+community[25] = "Austin"
+community[64] = "Clearing"
+community[26] = "West Garfield Park"
+community[65] = "West Lawn"
+community[27] = "East Garfield Park"
+community[66] = "Chicago Lawn"
+community[28] = "Near West Side"
+community[67] = "West Englewood"
+community[29] = "North Lawndale"
+community[68] = "Englewood"
+community[30] = "South Lawndale"
+community[69] = "Greater Grand Crossing"
+community[31] = "Lower West Side"
+community[70] = "Ashburn"
+community[32] = "Loop"
+community[71] = "Auburn Gresham"
+community[33] = "Near South Side"
+community[72] = "Beverly"
+community[34] = "Armour Square"
+community[73] = "Washington Heights"
+community[35] = "Douglas"
+community[74] = "Mount Greenwood"
+community[36] = "Oakland"
+community[75] = "Morgan Park"
+community[37] = "Fuller Park"
+community[76] = "Ohare"
+community[38] = "Grand Boulevard"
+community[77] = "Edgewater"
+community[39] = "Kenwood";
+
 var cutoffs = [0,1,5,10,15,20,30,40]
 
 function get_color_fixed(d) {
@@ -661,8 +742,8 @@ function get_color_fixed(d) {
             if (!has_chicago_layer) {
                 console.log('no chicago layer, downloading');
                 var which_feature = 0;
-                $.getJSON($SCRIPT_ROOT + '/static/json/chicago.topojson', function(data) {
-                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['BlockGroupsTIGER2010_clip']), {
+                $.getJSON($SCRIPT_ROOT + '/static/json/chicago_with_community.topojson', function(data) {
+                    chicago_layer = L.geoJson(topojson.feature(data, data.objects['bg_chicago_with_comm_areas'/*'BlockGroupsTIGER2010_clip'*/]), {
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
                             which_feature++;
@@ -690,8 +771,8 @@ function get_color_fixed(d) {
             if (!has_metro_layer) {
                 console.log('no metropolitan layer, downloading');
                 var which_feature = 0;
-                $.getJSON($SCRIPT_ROOT + '/static/json/metro.topojson', function(data) {
-                    metro_layer = L.geoJson(topojson.feature(data, data.objects['metro_nad83_clip']), {
+                $.getJSON($SCRIPT_ROOT + '/static/json/metro_with_community.topojson', function(data) {
+                    metro_layer = L.geoJson(topojson.feature(data, data.objects['bg_metro_with_comm_areas'/*'metro_nad83_clip'*/]), {
                         onEachFeature: function(feature, layer) {
                             feature.properties.num = which_feature;
                             which_feature++;
@@ -781,6 +862,7 @@ function get_color_fixed(d) {
                 var bg = my_layer._layers[i];
                 var num = bg.feature.properties.num;
                 var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
+                content += '<br>Community Area: ' + community[bg.feature.properties.COMM];
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(acc_style(data[num][0]));
@@ -811,6 +893,7 @@ function get_color_fixed(d) {
                 var bg = my_layer._layers[i];
                 var num = bg.feature.properties.num;
                 var content = 'Block Group ID: ' + bg.feature.properties.GEOID10;
+                content += '<br>Community Area: ' + community[bg.feature.properties.COMM];
                 if (landuse=="job") {
                     if (_.has(data, num)) {
                         bg.setStyle(fix_style(data[num][0]));
