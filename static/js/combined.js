@@ -143,10 +143,10 @@ function get_color_fixed(d) {
     var showNotification = function() {
         console.log('in showNOtifcation');
 
-        if (localStorage.getItem('no_survey') == 1) {
+        if (localStorage.getItem('no_survey_150828') == 1) {
             return;
         }
-        if (localStorage.getItem('later_survey') == 1) {
+        if (localStorage.getItem('later_survey_150828') == 1) {
             $('#note-not-first-time').css('z-index', 1001);
             $('#note-not-first-time').removeClass('no-disp');
         }
@@ -170,17 +170,17 @@ function get_color_fixed(d) {
         showNotification();
     });
     $('#btn-survey-no').on('click', function() {
-        localStorage.setItem('no_survey', 1);
+        localStorage.setItem('no_survey_150828', 1);
         $('.notification').css('z-index', -1);
         $('.notification').addClass('no-disp');
     })
     $('.btn-survey-later').on('click', function() {
-        localStorage.setItem('later_survey', 1);
+        localStorage.setItem('later_survey_150828', 1);
         $('.notification').css('z-index', -1);
         $('.notification').addClass('no-disp');
     })
     $('#btn-survey-now').on('click', function() {
-        localStorage.setItem('no_survey', 1);
+        localStorage.setItem('no_survey_150828', 1);
         $('.notification').css('z-index', -1);
         $('.notification').addClass('no-disp');
     })
