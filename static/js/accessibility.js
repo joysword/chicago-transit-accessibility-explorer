@@ -475,31 +475,12 @@ function get_color_fixed(d) {
         if (!(has_metro_layer || has_chicago_layer)) {
             return;
         }
-        console.log('zoom:', map.getZoom());
-        if (map.getZoom() <= 10) {
-            console.log('<=10');
-            my_layer.setStyle(function(feature) {
-                var new_color = get_color_fixed(100*cached_json[cache_index][feature.properties.num]);
-                return {
-                    color: new_color,
-                    opacity: 0.4,
-                    weight: 1.5,
-                }
-            });
-            console.log('changed to: new_color, 1.5')
-        }
-        else {
-            console.log('>10');
-            my_layer.setStyle(function(feature) {
-                var new_color = get_color_fixed(100*cached_json[cache_index][feature.properties.num]);
-                return {
-                    color: '#fff',
-                    weight: 1,
-                    opacity: 1,
-                }
-            });
-            console.log('changed to: #fff, 1')
-        }
+        var new_zoom = map.getZoom();
+        console.log('zoom:', new_zoom);
+        my_layer.setStyle(function(feature) {
+            var new_color = get_color(100*cached_json[cache_index][feature.properties.num][0]);
+            return set_style_for_zoom(new_color, new_zoom);
+        })
     }
 
     // which accessibility? job, or other land uses?
@@ -1068,34 +1049,32 @@ function get_color_fixed(d) {
 
     function acc_style(num) {
         var color = get_color(100*num);
-        if (map.getZoom()<=10) {
-            return {
-                fillColor: color,
-                weight: 1.5,
-                color: color,
-                opacity: 0.5,
-                fillOpacity: 0.7
-            }
-        }
-        else {
-            return {
-                fillColor: color,
-                weight: 1,
-                color: '#fff',
-                opacity: 1,
-                fillOpacity: 0.7
-            }
-        }
+        var zoom = map.getZoom();
+        return set_style_for_zoom(color, zoom);
     }
 
     function fix_style(num) {
         var color = get_color_fixed(100*num);
-        if (map.getZoom()<=10) {
+        var zoom = map.getZoom();
+        return set_style_for_zoom(color, zoom);
+    }
+
+    function set_style_for_zoom(color, zoom) {
+        if (zoom<12) {
             return {
                 fillColor: color,
-                weight: 1.5,
+                weight: 1,
                 color: color,
                 opacity: 0.5,
+                fillOpacity: 0.7
+            }
+        }
+        else if (zoom==12) {
+            return {
+                fillColor: color,
+                weight: 0.5,
+                color: '#fff',
+                opacity: 0.7,
                 fillOpacity: 0.7
             }
         }
@@ -1104,7 +1083,7 @@ function get_color_fixed(d) {
                 fillColor: color,
                 weight: 1,
                 color: '#fff',
-                opacity: 1,
+                opacity: 0.7,
                 fillOpacity: 0.7
             }
         }

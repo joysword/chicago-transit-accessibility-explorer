@@ -498,8 +498,9 @@ community[39] = "Kenwood";
 
     function empty_style(feature) {
         return {
-            weight: 1,
+            weight: 0.5,
             color: '#fff',
+            opacity: 0.5,
             fillColor: '#7c7dbb',
             fillOpacity: 0.5
         }
