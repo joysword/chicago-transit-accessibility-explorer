@@ -87,50 +87,6 @@ community[77] = "Edgewater"
 community[39] = "Kenwood";
 
 (function(){
-    var showNotification = function() {
-        console.log('in showNOtifcation');
-
-        if (localStorage.getItem('no_survey_150828') == 1) {
-            return;
-        }
-        if (localStorage.getItem('later_survey_150828') == 1) {
-            $('#note-not-first-time').css('z-index', 1001);
-            $('#note-not-first-time').removeClass('no-disp');
-        }
-        else {
-            $('#note-first-time').css('z-index', 1001);
-            $('#note-first-time').removeClass('no-disp');
-        }
-
-    }
-    if (localStorage.getItem('travel_popup') == null) {
-        show_popup();
-    }
-    else {
-        showNotification();
-    }
-    $('#btn-overlay-once').on('click', function(e) {
-        showNotification();
-    })
-    $('#btn-overlay-ever').on('click', function(e) {
-        localStorage.setItem('travel_popup', 1);
-        showNotification();
-    });
-    $('#btn-survey-no').on('click', function() {
-        localStorage.setItem('no_survey_150828', 1);
-        $('.notification').css('z-index', -1);
-        $('.notification').addClass('no-disp');
-    })
-    $('.btn-survey-later').on('click', function() {
-        localStorage.setItem('later_survey_150828', 1);
-        $('.notification').css('z-index', -1);
-        $('.notification').addClass('no-disp');
-    })
-    $('#btn-survey-now').on('click', function() {
-        localStorage.setItem('no_survey_150828', 1);
-        $('.notification').css('z-index', -1);
-        $('.notification').addClass('no-disp');
-    })
 
     //var cached_layers = {};
     var cached_json = {};
