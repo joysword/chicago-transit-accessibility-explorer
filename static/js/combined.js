@@ -1408,7 +1408,7 @@ function get_color_fixed(d) {
     }
 
     function load_community() {
-        $.getJSON($SCRIPT_ROOT + "/static/json/neighborhoods.json", function(data) {
+        $.getJSON($SCRIPT_ROOT + "/static/json/community.json", function(data) {
             community_layer.addLayer(
                 L.geoJson(data.features, {
                     style: {
