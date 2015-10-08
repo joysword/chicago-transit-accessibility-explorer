@@ -88,6 +88,17 @@ community[39] = "Kenwood";
 
 (function(){
 
+    if (localStorage.getItem('travel_popup') == null) {
+        show_popup();
+    }
+    // $('#btn-overlay-once').on('click', function(e) {
+    //     showNotification();
+    // })
+    $('#btn-overlay-ever').on('click', function(e) {
+        localStorage.setItem('travel_popup', 1);
+        //showNotification();
+    });
+
     //var cached_layers = {};
     var cached_json = {};
     var metro_layer;

@@ -140,6 +140,17 @@ function get_color_fixed(d) {
 
 (function(){
 
+    if (localStorage.getItem('acc_popup_150828') == null) {
+        show_popup();
+    }
+    // $('#btn-overlay-once').on('click', function(e) {
+    //     showNotification();
+    // })
+    $('#btn-overlay-ever').on('click', function(e) {
+        localStorage.setItem('acc_popup_150828', 1);
+        //showNotification();
+    });
+
     //var cached_layers = {};
     var cached_json = {};
     var cached_max_acc = {};
