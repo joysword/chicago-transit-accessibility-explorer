@@ -244,7 +244,7 @@ function get_color_fixed(d) {
     L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiam95c3dvcmQiLCJhIjoiSmJYSVNnUSJ9.is_i8oSQtofgH31ZkIMBgA').addTo(map);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiam95c3dvcmQiLCJhIjoiSmJYSVNnUSJ9.is_i8oSQtofgH31ZkIMBgA', {
-        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://ntilahun.com' target='_blank'>&copy; The Urban Transporation & Behavior Research Group, UIC<a/>"
+        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://ntilahun.people.uic.edu' target='_blank'>&copy; The Urban Transporation & Behavior Research Group, UIC<a/>"
     }).addTo(map2);
 
     L.control.scale({position: 'bottomright'}).addTo(map2);
