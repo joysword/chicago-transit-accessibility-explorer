@@ -171,6 +171,8 @@ function get_color_fixed(d) {
     var cta_layer2 = new L.FeatureGroup();
     var community_layer = new L.FeatureGroup();
     var community_layer2 = new L.FeatureGroup();
+    var ward_layer = new L.FeatureGroup();
+    var ward_layer2 = new L.FeatureGroup();
     var cta_line_names = ["blue", "brown", "green", "orange", "pink", "purple", "red", "yellow", "metra"];
 
     var val = [];
@@ -244,7 +246,7 @@ function get_color_fixed(d) {
     L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiam95c3dvcmQiLCJhIjoiSmJYSVNnUSJ9.is_i8oSQtofgH31ZkIMBgA').addTo(map);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiam95c3dvcmQiLCJhIjoiSmJYSVNnUSJ9.is_i8oSQtofgH31ZkIMBgA', {
-        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://ntilahun.people.uic.edu' target='_blank'>&copy; The Urban Transporation & Behavior Research Group, UIC<a/>"
+        attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> | <a href='http://ntilahun.people.uic.edu' target='_blank'>&copy; The Travel Behavior & Urban Systems Research Group, UIC<a/>"
     }).addTo(map2);
 
     L.control.scale({position: 'bottomright'}).addTo(map2);
@@ -283,6 +285,8 @@ function get_color_fixed(d) {
     show_lines();
     load_community();
     show_community();
+    load_ward();
+    show_ward();
 
     var legend_jenks = L.control({position: 'bottomleft'});
     legend_jenks.onAdd = function(map) {
@@ -583,6 +587,17 @@ function get_color_fixed(d) {
         else {
             map.removeLayer(community_layer);
             map2.removeLayer(community_layer2);
+        }
+    });
+
+    $('#checkbox-ward').change(function(){
+        if ($('#checkbox-ward').is(':checked')) {
+            map.addLayer(ward_layer);
+            map2.addLayer(ward_layer2);
+        }
+        else {
+            map.removeLayer(ward_layer);
+            map2.removeLayer(ward_layer2);
         }
     });
 
@@ -1379,20 +1394,20 @@ function get_color_fixed(d) {
             community_layer.addLayer(
                 L.geoJson(data.features, {
                     style: {
-                        weight: 1,
+                        weight: 2,
                         opacity: 0.8,
                         fill: false,
-                        color: '#333'
+                        color: '#e9a3c9'
                     }
                 })
             );
             community_layer2.addLayer(
                 L.geoJson(data.features, {
                     style: {
-                        weight: 1,
+                        weight: 2,
                         opacity: 0.8,
                         fill: false,
-                        color: '#333'
+                        color: '#e9a3c9'
                     }
                 })
             );
@@ -1407,4 +1422,35 @@ function get_color_fixed(d) {
         }
     }
 
+    function load_ward() {
+        $.getJSON($SCRIPT_ROOT + "/static/json/ward.json", function(data) {
+            ward_layer.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#a1d76a'
+                    }
+                })
+            );
+            ward_layer2.addLayer(
+                L.geoJson(data.features, {
+                    style: {
+                        weight: 2,
+                        opacity: 0.8,
+                        fill: false,
+                        color: '#a1d76a'
+                    }
+                })
+            );
+        });
+    }
+
+    function show_ward() {
+        if ($('#checkbox-ward').is(':checked')) {
+            map.addLayer(ward_layer);
+            map2.addLayer(ward_layer2);
+        }
+    }
 })();

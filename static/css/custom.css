@@ -251,7 +251,7 @@ body {
   top: 50px;
 }
 #menu.well {
-  padding: 10px 0 15px;
+  padding: 10px 0 10px;
 }
 #menu label {
   font-size: 14px;
@@ -263,7 +263,7 @@ body {
   margin: 0;
 }
 #menu li {
-  margin: 0 15px 0 0;
+  margin: 0 10px 0 0;
 }
 #menu .row {
   margin-bottom: 15px;
@@ -362,4 +362,10 @@ body {
     -webkit-box-shadow: 0 0 5px black;
     -moz-box-shadow:    0 0 5px black;
     box-shadow:         0 0 5px black;
+}
+
+/* adding ward boundaries */
+.checkbox {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
