@@ -1,3 +1,6 @@
+// this is the main script for Combined view of Chicago Accessibility Explorer
+// live link at: http://urbanaccessibility.com/accessibility/combined
+
 $(window).resize(function () {
     var h = $(window).height(),
       offsetTop = 50; // Calculate the top offset
